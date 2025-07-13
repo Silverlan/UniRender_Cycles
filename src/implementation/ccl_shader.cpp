@@ -744,6 +744,15 @@ void pragma::scenekit::CCLShader::ApplySocketValue(const ccl::ShaderNode &shader
 {
 	if(sockDesc.dataValue.type == SocketType::Closure)
 		return;
+	if (sockType.type == ccl::SocketType::STRING && socketName == "filename") {
+		// Make file paths absolute
+		auto *curVal = static_cast<pragma::scenekit::STString*>(sockDesc.dataValue.value.get());
+		if (curVal) {
+			std::string absPath;
+			if (filemanager::find_absolute_path(*curVal, absPath))
+				node.set(sockType, absPath.c_str());
+		}
+	}
 	if(apply_translated_socket_value<ccl::MathNode, pragma::scenekit::nodes::math::MathType>(shaderNode, socketName, "math_type", sockDesc, node, sockType))
 		return;
 	if(apply_translated_socket_value<ccl::MappingNode, pragma::scenekit::nodes::mapping::Type>(shaderNode, socketName, "mapping_type", sockDesc, node, sockType))

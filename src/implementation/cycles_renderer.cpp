@@ -2100,18 +2100,13 @@ void pragma::scenekit::cycles::Renderer::AddSkybox(const std::string &texture)
 	auto &sceneInfo = m_scene->GetSceneInfo();
 	auto skyTex = (sceneInfo.sky.empty() == false) ? sceneInfo.sky : texture;
 
-	// Note: m_sky can be absolute or relative path
-	auto absPath = Scene::GetAbsSkyPath(skyTex);
-	if(absPath.has_value() == false)
-		return;
-
 	// Setup the skybox as a background shader
 	auto desc = pragma::scenekit::GroupNodeDesc::Create(m_scene->GetShaderNodeManager());
 	auto &nodeOutput = desc->AddNode(NODE_OUTPUT);
 	auto &nodeBg = desc->AddNode(NODE_BACKGROUND_SHADER);
 	nodeBg.SetProperty(nodes::background_shader::IN_STRENGTH, sceneInfo.skyStrength);
 
-	auto &nodeTex = desc->AddImageTextureNode(*absPath, TextureType::EquirectangularImage);
+	auto &nodeTex = desc->AddImageTextureNode(skyTex, TextureType::EquirectangularImage);
 	desc->Link(nodeTex, nodes::environment_texture::OUT_COLOR, nodeBg, nodes::background_shader::IN_COLOR);
 	desc->Link(nodeBg, nodes::background_shader::OUT_BACKGROUND, nodeOutput, nodes::output::IN_SURFACE);
 
