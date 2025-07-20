@@ -74,8 +74,15 @@ jobs:
           cp -a "${staging}/opensubdiv" release/
           cp -a "${staging}/tbb" release/
 
+      - name: Build Tag Name
+        id: build_tag_name
+        shell: bash
+        run: |
+          echo "tag_name=$(TZ='Europe/Berlin' date +%F)" >> $GITHUB_OUTPUT
+
       - name: Release Binaries
         uses: Silverlan/common_actions/release_nightly_binaries@main
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           commit: ${{ github.ref_name }}
+          tag: '${{ steps.build_tag_name.outputs.tag_name }}'
