@@ -73,7 +73,11 @@ jobs:
         id: build_tag_name
         shell: bash
         run: |
-          echo "tag_name=$(TZ='Europe/Berlin' date +%F)" >> $GITHUB_OUTPUT
+          if [[ "$GITHUB_EVENT_NAME" == "schedule" ]]; then
+            echo "tag_name=latest" >> $GITHUB_OUTPUT
+          else
+            echo "tag_name=$(TZ='Europe/Berlin' date +%F)" >> $GITHUB_OUTPUT
+          fi
 
       - name: Release Binaries
         uses: Silverlan/common_actions/release_nightly_binaries@main
