@@ -33,6 +33,8 @@ jobs:
     steps:
       - name: Setup Pragma
         uses: Silverlan/pragma/github_actions/setup@main
+        with:
+          branch: 'develop'
         
       - uses: actions/setup-python@v4
         with:
