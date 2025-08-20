@@ -35,6 +35,7 @@ jobs:
         uses: Silverlan/pragma/github_actions/setup@main
         with:
           branch: 'develop'
+          with_cuda: '1'
         
       - uses: actions/setup-python@v4
         with:
