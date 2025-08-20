@@ -31,12 +31,22 @@ jobs:
           - os: windows-latest
             name: "Windows x64 MSVC"
     steps:
+      - name: Build Tag Name
+        id: build_tag_name
+        shell: bash
+        run: |
+          if [[ "$GITHUB_EVENT_NAME" == "schedule" ]]; then
+            echo "tag_name=latest" >> $GITHUB_OUTPUT
+          else
+            echo "tag_name=$(TZ='Europe/Berlin' date +%F)" >> $GITHUB_OUTPUT
+          fi
+
       - name: Setup Pragma
         uses: Silverlan/pragma/github_actions/setup@main
         with:
           branch: 'develop'
           with_cuda: '1'
-        
+
       - uses: actions/setup-python@v4
         with:
           python-version: '3.11'
@@ -71,16 +81,6 @@ jobs:
           cp -a "${staging}/openimageio" release/
           cp -a "${staging}/opensubdiv" release/
           cp -a "${staging}/tbb" release/
-        
-      - name: Build Tag Name
-        id: build_tag_name
-        shell: bash
-        run: |
-          if [[ "$GITHUB_EVENT_NAME" == "schedule" ]]; then
-            echo "tag_name=latest" >> $GITHUB_OUTPUT
-          else
-            echo "tag_name=$(TZ='Europe/Berlin' date +%F)" >> $GITHUB_OUTPUT
-          fi
 
       - name: Release Binaries
         uses: Silverlan/common_actions/release_nightly_binaries@main
