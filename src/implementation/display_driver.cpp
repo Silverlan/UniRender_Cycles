@@ -23,7 +23,6 @@ module pragma.scenekit.cycles;
 
 import pragma.scenekit;
 
-#pragma optimize("", off)
 static void dump_image_file(const std::string &name, uimg::ImageBuffer &imgBuf)
 {
 	auto f = filemanager::open_file("temp/cycles_driver_output_" + name + ".hdr", filemanager::FileMode::Write | filemanager::FileMode::Binary);
@@ -314,4 +313,3 @@ bool pragma::scenekit::cycles::OutputDriver::read_render_tile(const Tile &tile)
 	tile.set_pass_pixels("BakeDifferential", imgDifferential->GetChannelCount(), reinterpret_cast<float *>(imgDifferential->GetData()));
 	return true;
 }
-#pragma optimize("", on)
