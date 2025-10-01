@@ -21,9 +21,9 @@ module;
 #include <scene/mesh.h>
 #include <mikktspace.h>
 
-import pragma.scenekit;
-
 module pragma.scenekit.cycles;
+
+import pragma.scenekit;
 
 struct MikkUserData {
   MikkUserData(
