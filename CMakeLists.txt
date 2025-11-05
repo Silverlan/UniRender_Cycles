@@ -13,7 +13,6 @@ set(PROJ_NAME UniRender_cycles)
 pr_add_library(${PROJ_NAME} SHARED)
 
 pr_add_dependency(${PROJ_NAME} util_raytracing TARGET PUBLIC)
-pr_add_dependency(${PROJ_NAME} spdlog TARGET PUBLIC)
 
 pr_init_module(${PROJ_NAME})
 
