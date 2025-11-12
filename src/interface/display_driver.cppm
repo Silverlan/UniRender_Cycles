@@ -3,19 +3,9 @@
 
 module;
 
-#include "definitions.hpp"
 #include <util/math.h>
 #include <session/display_driver.h>
 #include <session/output_driver.h>
-#include <util_image_types.hpp>
-#include <mathutil/uvec.h>
-#include <unordered_map>
-#include <condition_variable>
-#include <thread>
-#include <mutex>
-#include <queue>
-#include <memory>
-#include <vector>
 
 export module pragma.scenekit.cycles:display_driver;
 

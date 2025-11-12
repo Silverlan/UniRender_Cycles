@@ -3,11 +3,8 @@
 
 module;
 
-#include "definitions.hpp"
 #include <util/math.h>
 #include <scene/shader_nodes.h>
-#include <sharedutils/datastream.h>
-#include <sharedutils/util_virtual_shared_from_this.hpp>
 #include <kernel/types.h>
 #include <kernel/svm/types.h>
 
@@ -119,5 +116,11 @@ export namespace pragma::scenekit {
 		Flags m_flags = Flags::None;
 		cycles::Renderer &m_renderer;
 	};
+	using namespace umath::scoped_enum::bitwise;
 };
-REGISTER_BASIC_BITWISE_OPERATORS(pragma::scenekit::CCLShader::Flags)
+export {
+	namespace umath::scoped_enum::bitwise {
+		template<>
+		struct enable_bitwise_operators<pragma::scenekit::CCLShader::Flags> : std::true_type {};
+	}
+}

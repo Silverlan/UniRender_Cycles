@@ -9,10 +9,6 @@ module;
 #include <scene/scene.h>
 #include <scene/shader_nodes.h>
 #include <OpenImageIO/ustring.h>
-#include <sharedutils/util_path.hpp>
-#include <sharedutils/util_string.h>
-#include <fsys/filesystem.h>
-#include <udm.hpp>
 
 module pragma.scenekit.cycles;
 
