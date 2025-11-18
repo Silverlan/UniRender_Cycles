@@ -11,8 +11,7 @@ export module pragma.scenekit.cycles:display_driver;
 
 import pragma.scenekit;
 
-export namespace pragma::scenekit::cycles
-{
+export namespace pragma::scenekit::cycles {
 	class BaseDriver {
 	  public:
 		BaseDriver(uint32_t width, uint32_t height);

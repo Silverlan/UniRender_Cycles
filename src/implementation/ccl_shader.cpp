@@ -817,10 +817,10 @@ void pragma::scenekit::CCLShader::ApplySocketValue(const ccl::ShaderNode &shader
 			static_assert(std::is_same_v<STString, std::string>);
 			auto &v = *static_cast<std::string *>(sockDesc.dataValue.value.get());
 
-			if (socketName == "filename") {
+			if(socketName == "filename") {
 				// Make file paths absolute
 				std::string absPath;
-				if (filemanager::find_absolute_path(v, absPath)) {
+				if(filemanager::find_absolute_path(v, absPath)) {
 					node.set(sockType, absPath.c_str());
 					break;
 				}

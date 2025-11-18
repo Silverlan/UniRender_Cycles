@@ -677,7 +677,7 @@ void pragma::scenekit::cycles::Renderer::SyncCamera(const pragma::scenekit::Came
 	cclCam.set_aperture_ratio(cam.GetApertureRatio());
 	cclCam.set_blades(cam.GetBladeCount());
 	cclCam.set_bladesrotation(umath::deg_to_rad(cam.GetBladesRotation()));
-	auto interocDistMeters = cam.GetInterocularDistance() *0.001; // mm -> m
+	auto interocDistMeters = cam.GetInterocularDistance() * 0.001; // mm -> m
 	cclCam.set_interocular_distance(interocDistMeters);
 	cclCam.set_longitude_max(umath::deg_to_rad(cam.GetLongitudeMax()));
 	cclCam.set_longitude_min(umath::deg_to_rad(cam.GetLongitudeMin()));
@@ -1486,7 +1486,7 @@ bool pragma::scenekit::cycles::Renderer::Initialize(pragma::scenekit::Scene &sce
 	}
 
 	auto apiData = GetApiData();
-/*
+	/*
 #ifdef _WIN32
 	auto udmDebugStandalone = apiData.GetFromPath("cycles/debug/debugStandalone");
 	if(udmDebugStandalone) {

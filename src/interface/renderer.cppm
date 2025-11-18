@@ -12,8 +12,7 @@ export module pragma.scenekit.cycles:renderer;
 import :ccl_shader;
 import pragma.scenekit;
 
-export namespace pragma::scenekit::cycles
-{
+export namespace pragma::scenekit::cycles {
 	void compute_tangents(ccl::Mesh *mesh, bool need_sign, bool active_render);
 	class DisplayDriver;
 	class OutputDriver;
