@@ -45,7 +45,7 @@
 #include "app/oiio_output_driver.h"
 
 #ifdef WITH_CYCLES_STANDALONE_GUI
-#  include "util/view.h"
+#include "util/view.h"
 #endif
 
 #include "app/cycles_xml.h"

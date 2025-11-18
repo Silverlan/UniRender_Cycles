@@ -3,21 +3,7 @@
 
 module;
 
-#include <util_image.hpp>
-#include <util_image_buffer.hpp>
-#include <util_image.hpp>
-#include <mathutil/color.h>
-#include <sharedutils/util_string.h>
-#include <sharedutils/util.h>
-#include <sharedutils/util_baking.hpp>
-#include <sharedutils/magic_enum.hpp>
-#include <fsys/filesystem.h>
-#include <fsys/ifile.hpp>
 #include <util/half.h>
-#include <queue>
-#include <mutex>
-#include <memory>
-#include <cstring>
 
 module pragma.scenekit.cycles;
 

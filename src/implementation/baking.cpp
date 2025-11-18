@@ -16,7 +16,6 @@
 
 module;
 
-#include <sharedutils/util_baking.hpp>
 #include <scene/mesh.h>
 
 module pragma.scenekit.cycles;

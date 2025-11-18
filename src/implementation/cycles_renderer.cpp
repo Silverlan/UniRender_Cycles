@@ -3,7 +3,6 @@
 
 module;
 
-#include <spdlog/logger.h>
 #include <scene/light.h>
 #include <scene/camera.h>
 #include <app/cycles_xml.h>
@@ -22,14 +21,7 @@ module;
 #include <scene/particles.h>
 #include <scene/hair.h>
 #include <app/oiio_output_driver.h>
-#include <sharedutils/util_baking.hpp>
-#include <sharedutils/util_pragma.hpp>
-#include <sharedutils/util_parallel_job.hpp>
-#include <fsys/ifile.hpp>
-#include <mathutil/umath_lighting.hpp>
-#include <mathutil/units.h>
 #include <util/path.h>
-#include <udm.hpp>
 
 #ifdef _WIN32
 #define ENABLE_CYCLES_LOGGING
@@ -38,7 +30,6 @@ module;
 #define GLOG_NO_ABBREVIATED_SEVERITIES
 #include <glog/logging.h>
 #endif
-#include <util_image_buffer.hpp>
 
 #ifdef _WIN32
 #include <Shlobj.h>
@@ -686,7 +677,8 @@ void pragma::scenekit::cycles::Renderer::SyncCamera(const pragma::scenekit::Came
 	cclCam.set_aperture_ratio(cam.GetApertureRatio());
 	cclCam.set_blades(cam.GetBladeCount());
 	cclCam.set_bladesrotation(umath::deg_to_rad(cam.GetBladesRotation()));
-	cclCam.set_interocular_distance(units::convert<units::length::millimeter, units::length::meter>(cam.GetInterocularDistance()));
+	auto interocDistMeters = cam.GetInterocularDistance() * 0.001; // mm -> m
+	cclCam.set_interocular_distance(interocDistMeters);
 	cclCam.set_longitude_max(umath::deg_to_rad(cam.GetLongitudeMax()));
 	cclCam.set_longitude_min(umath::deg_to_rad(cam.GetLongitudeMin()));
 	cclCam.set_latitude_max(umath::deg_to_rad(cam.GetLatitudeMax()));
@@ -1494,7 +1486,7 @@ bool pragma::scenekit::cycles::Renderer::Initialize(pragma::scenekit::Scene &sce
 	}
 
 	auto apiData = GetApiData();
-/*
+	/*
 #ifdef _WIN32
 	auto udmDebugStandalone = apiData.GetFromPath("cycles/debug/debugStandalone");
 	if(udmDebugStandalone) {

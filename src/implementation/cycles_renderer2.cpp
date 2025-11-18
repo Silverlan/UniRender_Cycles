@@ -19,7 +19,6 @@ module;
 #include <scene/bake.h>
 #include <scene/particles.h>
 #include <util/path.h>
-#include <udm.hpp>
 // #define ENABLE_CYCLES_LOGGING
 #ifdef ENABLE_CYCLES_LOGGING
 #define GLOG_NO_ABBREVIATED_SEVERITIES
@@ -29,16 +28,6 @@ module;
 #ifdef _WIN32
 #include <Shlobj.h>
 #endif
-
-#include <util_image.hpp>
-#include <util_image_buffer.hpp>
-#include <sharedutils/util_baking.hpp>
-#include <sharedutils/util_event_reply.hpp>
-#include <sharedutils/util_parallel_job.hpp>
-#include <spdlog/logger.h>
-#include <fsys/ifile.hpp>
-#include <mathutil/umath_lighting.hpp>
-#include <mathutil/units.h>
 
 module pragma.scenekit.cycles;
 

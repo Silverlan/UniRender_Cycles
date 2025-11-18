@@ -3,26 +3,16 @@
 
 module;
 
-#include "definitions.hpp"
 #include <util/math.h>
-#include <sharedutils/util_baking.hpp>
-#include <sharedutils/util_parallel_job.hpp>
-#include <sharedutils/util.h>
-#include <sharedutils/util_event_reply.hpp>
-#include <mathutil/uvec.h>
-#include <mathutil/transform.hpp>
 #include <session/session.h>
 #include <scene/shader_graph.h>
-#include <cinttypes>
-#include <atomic>
 
 export module pragma.scenekit.cycles:renderer;
 
 import :ccl_shader;
 import pragma.scenekit;
 
-export namespace pragma::scenekit::cycles
-{
+export namespace pragma::scenekit::cycles {
 	void compute_tangents(ccl::Mesh *mesh, bool need_sign, bool active_render);
 	class DisplayDriver;
 	class OutputDriver;
@@ -101,10 +91,6 @@ export namespace pragma::scenekit::cycles
 	  private:
 		Renderer(const Scene &scene, Flags flags);
 
-		static ccl::ShaderOutput *FindShaderNodeOutput(ccl::ShaderNode &node, const std::string &output);
-		static ccl::ShaderNode *FindShaderNode(ccl::ShaderGraph &graph, const std::string &nodeName);
-		static ccl::ShaderNode *FindShaderNode(ccl::ShaderGraph &graph, const OpenImageIO_v2_1::ustring &name);
-
 		virtual void SetCancelled(const std::string &msg = "Cancelled by application.") override;
 		bool InitializeBakingData();
 		void FinalizeAndCloseCyclesScene();
@@ -177,5 +163,11 @@ export namespace pragma::scenekit::cycles
 
 		Scene::RenderMode m_renderMode = Scene::RenderMode::RenderImage;
 	};
+	using namespace umath::scoped_enum::bitwise;
 };
-REGISTER_BASIC_BITWISE_OPERATORS(pragma::scenekit::cycles::Renderer::StateFlags)
+export {
+	namespace umath::scoped_enum::bitwise {
+		template<>
+		struct enable_bitwise_operators<pragma::scenekit::cycles::Renderer::StateFlags> : std::true_type {};
+	}
+}
