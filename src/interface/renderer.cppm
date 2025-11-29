@@ -3,6 +3,8 @@
 
 module;
 
+#include "util_enum_flags.hpp"
+
 #include <util/math.h>
 #include <session/session.h>
 #include <scene/shader_graph.h>
@@ -166,8 +168,5 @@ export namespace pragma::scenekit::cycles {
 	using namespace umath::scoped_enum::bitwise;
 };
 export {
-	namespace umath::scoped_enum::bitwise {
-		template<>
-		struct enable_bitwise_operators<pragma::scenekit::cycles::Renderer::StateFlags> : std::true_type {};
-	}
+	REGISTER_ENUM_FLAGS(pragma::scenekit::cycles::Renderer::StateFlags)
 }
