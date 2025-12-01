@@ -42,7 +42,7 @@ jobs:
           fi
 
       - name: Setup Pragma
-        uses: Silverlan/pragma/github_actions/setup@main
+        uses: Silverlan/pragma/github_actions/setup@develop
         with:
           branch: 'develop'
           with_cuda: '1'
@@ -52,7 +52,7 @@ jobs:
           python-version: '3.11'
         
       - name: Build Dependencies
-        uses: Silverlan/pragma/github_actions/build@main
+        uses: Silverlan/pragma/github_actions/build@develop
         id: build-deps
         with:
           # This will build the core dependencies, as well as cycles, but not Pragma
