@@ -51,6 +51,16 @@ jobs:
         with:
           python-version: '3.11'
 
+      - name: Install Cuda
+        uses: Jimver/cuda-toolkit@v0.2.23
+        with:
+          cuda: '12.8.1'
+          use-github-cache: false
+          use-local-cache: true
+          linux-local-args: '["--toolkit"]'
+          method: 'network'
+          sub-packages: '["nvcc"]'
+
       - name: Build Dependencies
         uses: Silverlan/pragma/github_actions/build@develop
         id: build-deps

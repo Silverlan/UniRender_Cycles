@@ -51,6 +51,16 @@ jobs:
         with:
           python-version: '3.11'
         
+      - name: Clone setup_cuda repository
+        shell: bash
+        run: git clone https://github.com/Silverlan/setup_cuda.git
+
+      - name: Install Cuda
+        shell: pwsh
+        run: setup_cuda/setup_cuda.ps1
+        env:
+            INPUT_CUDA_VERSION: "12.5.0"
+
       - name: Build Dependencies
         uses: Silverlan/pragma/github_actions/build@develop
         id: build-deps
