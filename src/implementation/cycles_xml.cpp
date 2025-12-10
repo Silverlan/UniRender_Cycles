@@ -109,7 +109,7 @@ static bool xml_read_float(float *value, xml_node node, const char *name)
 	xml_attribute attr = node.attribute(name);
 
 	if(attr) {
-		*value = (float)atof(attr.value());
+		*value = (float)ustring::cstring_to_number<float>(attr.value());
 		return true;
 	}
 
@@ -125,7 +125,7 @@ static bool xml_read_float_array(vector<float> &value, xml_node node, const char
 		string_split(tokens, attr.value());
 
 		foreach(const string &token, tokens)
-			value.push_back((float)atof(token.c_str()));
+			value.push_back((float)ustring::cstring_to_number<float>(token.c_str()));
 
 		return true;
 	}
