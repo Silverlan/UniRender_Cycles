@@ -9,12 +9,12 @@ module pragma.scenekit.cycles;
 
 import pragma.scenekit;
 
-static void dump_image_file(const std::string &name, uimg::ImageBuffer &imgBuf)
+static void dump_image_file(const std::string &name, pragma::image::ImageBuffer &imgBuf)
 {
-	auto f = filemanager::open_file("temp/cycles_driver_output_" + name + ".hdr", filemanager::FileMode::Write | filemanager::FileMode::Binary);
+	auto f = pragma::fs::open_file("temp/cycles_driver_output_" + name + ".hdr", pragma::fs::FileMode::Write | pragma::fs::FileMode::Binary);
 	if(f) {
-		fsys::File fp {f};
-		uimg::save_image(fp, imgBuf, uimg::ImageFormat::HDR, 1.f);
+		pragma::fs::File fp {f};
+		pragma::image::save_image(fp, imgBuf, pragma::image::ImageFormat::HDR, 1.f);
 	}
 }
 
@@ -29,7 +29,7 @@ pragma::scenekit::cycles::DisplayDriver::DisplayDriver(pragma::scenekit::TileMan
 			RunPostProcessing();
 	}};
 
-	util::set_thread_name(m_postProcessingThread, "cycles_display_driver_pp");
+	pragma::util::set_thread_name(m_postProcessingThread, "cycles_display_driver_pp");
 }
 pragma::scenekit::cycles::DisplayDriver::~DisplayDriver()
 {
@@ -54,9 +54,9 @@ void pragma::scenekit::cycles::DisplayDriver::UpdateTileResolution(uint32_t tile
 	m_mappedTileImageBuffers.reserve(tileCount);
 	m_pendingForPpTileImageBuffers.reserve(tileCount);
 	for(auto i = decltype(tileCount) {0u}; i < tileCount; ++i) {
-		m_tmpImageBuffers.push_back(uimg::ImageBuffer::Create(static_cast<void *>(nullptr), tileWidth, tileHeight, uimg::Format::RGBA16));
-		m_mappedTileImageBuffers.push_back(uimg::ImageBuffer::Create(tileWidth, tileHeight, uimg::Format::RGBA16));
-		m_pendingForPpTileImageBuffers.push_back(uimg::ImageBuffer::Create(tileWidth, tileHeight, uimg::Format::RGBA16));
+		m_tmpImageBuffers.push_back(image::ImageBuffer::Create(static_cast<void *>(nullptr), tileWidth, tileHeight, image::Format::RGBA16));
+		m_mappedTileImageBuffers.push_back(image::ImageBuffer::Create(tileWidth, tileHeight, image::Format::RGBA16));
+		m_pendingForPpTileImageBuffers.push_back(image::ImageBuffer::Create(tileWidth, tileHeight, image::Format::RGBA16));
 	}
 }
 uint32_t pragma::scenekit::cycles::DisplayDriver::GetTileIndex(uint32_t x, uint32_t y) const
@@ -101,7 +101,7 @@ void pragma::scenekit::cycles::DisplayDriver::RunPostProcessing()
 			TileData tileData {};
 			tileData.info = tileInfo;
 			tileData.data.resize(tileInfo.effectiveSize.x * tileInfo.effectiveSize.y * src.GetPixelSize());
-			memcpy(tileData.data.data(), src.GetData(), util::size_of_container(tileData.data));
+			memcpy(tileData.data.data(), src.GetData(), pragma::util::size_of_container(tileData.data));
 			tileInfos.push(std::move(tileData));
 		}
 	}
@@ -188,7 +188,7 @@ void pragma::scenekit::cycles::DisplayDriver::draw(const Params &params) {}
 
 ////////////
 
-pragma::scenekit::cycles::OutputDriver::OutputDriver(const std::vector<std::pair<PassType, uimg::Format>> &passes, uint32_t width, uint32_t height) : BaseDriver {width, height}, m_passes {passes}
+pragma::scenekit::cycles::OutputDriver::OutputDriver(const std::vector<std::pair<PassType, image::Format>> &passes, uint32_t width, uint32_t height) : BaseDriver {width, height}, m_passes {passes}
 {
 	m_tileData.resize(width * height);
 	Reset();
@@ -198,7 +198,7 @@ void pragma::scenekit::cycles::OutputDriver::Reset()
 	m_imageBuffers.clear();
 	m_imageBuffers.reserve(m_passes.size());
 	for(auto &pair : m_passes) {
-		auto imgBuf = uimg::ImageBuffer::Create(m_width, m_height, pair.second);
+		auto imgBuf = image::ImageBuffer::Create(m_width, m_height, pair.second);
 		m_imageBuffers[pair.first] = PassInfo {std::string {magic_enum::enum_name(pair.first)}, imgBuf};
 	}
 }
@@ -207,7 +207,7 @@ void pragma::scenekit::cycles::OutputDriver::DebugDumpImages()
 	for(auto &pair : m_imageBuffers)
 		dump_image_file(std::string {magic_enum::enum_name(pair.first)}, *pair.second.imageBuffer);
 }
-std::shared_ptr<uimg::ImageBuffer> pragma::scenekit::cycles::OutputDriver::GetImageBuffer(PassType pass) const
+std::shared_ptr<pragma::image::ImageBuffer> pragma::scenekit::cycles::OutputDriver::GetImageBuffer(PassType pass) const
 {
 	auto it = m_imageBuffers.find(pass);
 	return (it != m_imageBuffers.end()) ? it->second.imageBuffer : nullptr;
@@ -221,7 +221,7 @@ void pragma::scenekit::cycles::OutputDriver::write_render_tile(const Tile &tile)
 		assert(imgBuf->IsFloatFormat());
 		if(!tile.get_pass_pixels(info.passName, imgBuf->GetChannelCount(), reinterpret_cast<float *>(m_tileData.data())))
 			continue;
-		memcpy(imgBuf->GetData(), m_tileData.data(), util::size_of_container(m_tileData));
+		memcpy(imgBuf->GetData(), m_tileData.data(), pragma::util::size_of_container(m_tileData));
 	}
 
 	static auto debugDumpAsFile = false;
@@ -246,7 +246,7 @@ static float intToFloat(int32_t i)
 	u.i = i;
 	return u.f;
 }
-void pragma::scenekit::cycles::OutputDriver::SetBakeData(const util::baking::BakeDataView &bakeData) { m_bakeData = &bakeData; }
+void pragma::scenekit::cycles::OutputDriver::SetBakeData(const pragma::util::baking::BakeDataView &bakeData) { m_bakeData = &bakeData; }
 bool pragma::scenekit::cycles::OutputDriver::read_render_tile(const Tile &tile)
 {
 	if(!m_bakeData)
@@ -293,8 +293,8 @@ bool pragma::scenekit::cycles::OutputDriver::read_render_tile(const Tile &tile)
 		}
 	}
 
-	auto imgPrimitive = uimg::ImageBuffer::Create(primitiveData.data(), w, h, uimg::Format::RGB32, true);
-	auto imgDifferential = uimg::ImageBuffer::Create(differentialData.data(), w, h, uimg::Format::RGBA32, true);
+	auto imgPrimitive = image::ImageBuffer::Create(primitiveData.data(), w, h, image::Format::RGB32, true);
+	auto imgDifferential = image::ImageBuffer::Create(differentialData.data(), w, h, image::Format::RGBA32, true);
 	tile.set_pass_pixels("BakePrimitive", imgPrimitive->GetChannelCount(), reinterpret_cast<float *>(imgPrimitive->GetData()));
 	tile.set_pass_pixels("BakeDifferential", imgDifferential->GetChannelCount(), reinterpret_cast<float *>(imgDifferential->GetData()));
 	return true;

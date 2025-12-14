@@ -46,21 +46,21 @@ static void validate_session(ccl::Scene &scene)
 // with Cycles internally. We'll fix those pixels here by overwriting them with the average
 // value of the surrounding pixels.
 // This only happens in the direct lighting map.
-static void fix_nan_pixels(uimg::ImageBuffer &imgBuf)
+static void fix_nan_pixels(pragma::image::ImageBuffer &imgBuf)
 {
 	auto w = imgBuf.GetWidth();
 	auto h = imgBuf.GetHeight();
 	for(auto x = decltype(w) {0u}; x < w; ++x) {
 		for(auto y = decltype(h) {0u}; y < h; ++y) {
 			auto view = imgBuf.GetPixelView(x, y);
-			Vector3 color {view.GetFloatValue(uimg::Channel::R), view.GetFloatValue(uimg::Channel::G), view.GetFloatValue(uimg::Channel::B)};
+			Vector3 color {view.GetFloatValue(pragma::image::Channel::R), view.GetFloatValue(pragma::image::Channel::G), view.GetFloatValue(pragma::image::Channel::B)};
 			if(std::isnan(color.x) || std::isnan(color.y) || std::isnan(color.z)) {
 				std::vector<Vector4> neighborValues;
 				auto addNeighborValue = [&neighborValues, &imgBuf, w, h](uint32_t x, uint32_t y) {
 					if(x >= w || y >= h)
 						return;
 					auto view = imgBuf.GetPixelView(x, y);
-					Vector4 color {view.GetFloatValue(uimg::Channel::R), view.GetFloatValue(uimg::Channel::G), view.GetFloatValue(uimg::Channel::B), view.GetFloatValue(uimg::Channel::A)};
+					Vector4 color {view.GetFloatValue(pragma::image::Channel::R), view.GetFloatValue(pragma::image::Channel::G), view.GetFloatValue(pragma::image::Channel::B), view.GetFloatValue(pragma::image::Channel::A)};
 					if(std::isnan(color[0]) || std::isnan(color[1]) || std::isnan(color[2]) || std::isnan(color[3]) || color[3] == 0.f)
 						return;
 					neighborValues.push_back(color);
@@ -88,16 +88,16 @@ static void fix_nan_pixels(uimg::ImageBuffer &imgBuf)
 				if(!neighborValues.empty())
 					avg = avg / static_cast<float>(neighborValues.size());
 
-				view.SetValue(uimg::Channel::R, avg.x);
-				view.SetValue(uimg::Channel::G, avg.y);
-				view.SetValue(uimg::Channel::B, avg.z);
+				view.SetValue(pragma::image::Channel::R, avg.x);
+				view.SetValue(pragma::image::Channel::G, avg.y);
+				view.SetValue(pragma::image::Channel::B, avg.z);
 			}
 		}
 	}
 }
 
 #if 0
-static void debug_dump_images(std::unordered_map<std::string,std::array<std::shared_ptr<uimg::ImageBuffer>,umath::to_integral(pragma::scenekit::Renderer::StereoEye::Count)>> &resultImageBuffers)
+static void debug_dump_images(std::unordered_map<std::string,std::array<std::shared_ptr<image::ImageBuffer>,pragma::math::to_integral(pragma::scenekit::Renderer::StereoEye::Count)>> &resultImageBuffers)
 {
 	for(auto &pair : resultImageBuffers)
 	{
@@ -112,17 +112,17 @@ static void debug_dump_images(std::unordered_map<std::string,std::array<std::sha
 		);
 		if(f)
 		{
-			fsys::File fp {f};
-			uimg::save_image(fp,*imgBuf,uimg::ImageFormat::HDR,1.f);
+			fs::File fp {f};
+			image::save_image(fp,*imgBuf,image::ImageFormat::HDR,1.f);
 		}
 	}
 }
 #endif
 
-util::EventReply pragma::scenekit::cycles::Renderer::HandleRenderStage(RenderWorker &worker, pragma::scenekit::Renderer::ImageRenderStage stage, StereoEye eyeStage, pragma::scenekit::Renderer::RenderStageResult *optResult)
+pragma::util::EventReply pragma::scenekit::cycles::Renderer::HandleRenderStage(RenderWorker &worker, pragma::scenekit::Renderer::ImageRenderStage stage, StereoEye eyeStage, pragma::scenekit::Renderer::RenderStageResult *optResult)
 {
 	auto handled = pragma::scenekit::Renderer::HandleRenderStage(worker, stage, eyeStage, optResult);
-	if(handled == util::EventReply::Handled)
+	if(handled == pragma::util::EventReply::Handled)
 		return handled;
 	switch(stage) {
 	case ImageRenderStage::InitializeScene:
@@ -156,7 +156,7 @@ util::EventReply pragma::scenekit::cycles::Renderer::HandleRenderStage(RenderWor
 						initialRenderStage = ImageRenderStage::Lighting;
 						break;
 						//default:
-						//	throw std::invalid_argument{"Invalid render mode " +std::to_string(umath::to_integral(m_renderMode))};
+						//	throw std::invalid_argument{"Invalid render mode " +std::to_string(pragma::math::to_integral(m_renderMode))};
 					}
 					StartNextRenderStage(worker, initialRenderStage, stereoscopic ? StereoEye::Left : StereoEye::None);
 					worker.Start();
@@ -181,13 +181,13 @@ util::EventReply pragma::scenekit::cycles::Renderer::HandleRenderStage(RenderWor
 	case ImageRenderStage::SceneNormals:
 	case ImageRenderStage::SceneDepth:
 		{
-			if(umath::is_flag_set(m_stateFlags, StateFlags::ProgressiveRefine))
+			if(pragma::math::is_flag_set(m_stateFlags, StateFlags::ProgressiveRefine))
 				m_progressiveRunning = true;
 			worker.AddThread([this, &worker, stage, eyeStage]() {
 				validate_session(*m_cclScene);
 
 				InitStereoEye(eyeStage);
-				if(umath::is_flag_set(m_stateFlags, StateFlags::SessionWasStarted)) {
+				if(pragma::math::is_flag_set(m_stateFlags, StateFlags::SessionWasStarted)) {
 					//options.session->scene->camera->need_flags_update = true;
 					//options.session->scene->camera->need_device_update = true;
 					//options.session->reset(options.session_params, session_buffer_params());
@@ -195,15 +195,15 @@ util::EventReply pragma::scenekit::cycles::Renderer::HandleRenderStage(RenderWor
 					m_cclSession->start();
 				}
 				else {
-					umath::set_flag(m_stateFlags, StateFlags::SessionWasStarted);
+					pragma::math::set_flag(m_stateFlags, StateFlags::SessionWasStarted);
 					m_cclSession->start();
 				}
 
-				auto progressMultiplier = umath::is_flag_set(m_stateFlags, StateFlags::NativeDenoising) ? 0.95f : 1.f;
+				auto progressMultiplier = pragma::math::is_flag_set(m_stateFlags, StateFlags::NativeDenoising) ? 0.95f : 1.f;
 				WaitForRenderStage(worker, 0.f, progressMultiplier, [this, &worker, stage, eyeStage]() mutable -> RenderStageResult {
 					SetIsBuildingKernels(false);
 
-					if(umath::is_flag_set(m_stateFlags, StateFlags::ProgressiveRefine) == false)
+					if(pragma::math::is_flag_set(m_stateFlags, StateFlags::ProgressiveRefine) == false)
 						m_cclSession->wait();
 					else if(m_progressiveRunning) {
 						std::unique_lock<std::mutex> lock {m_progressiveMutex};
@@ -235,15 +235,15 @@ util::EventReply pragma::scenekit::cycles::Renderer::HandleRenderStage(RenderWor
 								for(auto &imgBuf : pair.second) {
 									if(!imgBuf)
 										continue;
-									imgBuf->Convert(uimg::Format::RGBA_FLOAT);
+									imgBuf->Convert(image::Format::RGBA_FLOAT);
 
 									// Apply margin
 									auto numPixels = imgBuf->GetPixelCount();
 									std::vector<uint8_t> mask_buffer {};
 									mask_buffer.resize(numPixels);
 									constexpr auto margin = 16u;
-									util::baking::fill_bake_mask(m_bakePixels, numPixels, reinterpret_cast<char *>(mask_buffer.data()));
-									uimg::bake_margin(*imgBuf, mask_buffer, margin);
+									pragma::util::baking::fill_bake_mask(m_bakePixels, numPixels, reinterpret_cast<char *>(mask_buffer.data()));
+									image::bake_margin(*imgBuf, mask_buffer, margin);
 								}
 							}
 						}
@@ -271,7 +271,7 @@ util::EventReply pragma::scenekit::cycles::Renderer::HandleRenderStage(RenderWor
 						return false;
 					};
 
-					if(stage != ImageRenderStage::Lighting || !umath::is_flag_set(m_stateFlags, StateFlags::NativeDenoising)) {
+					if(stage != ImageRenderStage::Lighting || !pragma::math::is_flag_set(m_stateFlags, StateFlags::NativeDenoising)) {
 						auto res = StartNextRenderStage(worker, ImageRenderStage::FinalizeImage, eyeStage);
 						if(swapEye())
 							return RenderStageResult::Continue;
@@ -292,7 +292,7 @@ util::EventReply pragma::scenekit::cycles::Renderer::HandleRenderStage(RenderWor
 						auto *imgBuf = FindResultImageBuffer(debugPass, eyeStage);
 						if(imgBuf) {
 							if(passType)
-								GetResultImageBuffer(*passType, eyeStage) = imgBuf->Copy(uimg::Format::RGBA_FLOAT);
+								GetResultImageBuffer(*passType, eyeStage) = imgBuf->Copy(image::Format::RGBA_FLOAT);
 						}
 						auto res = StartNextRenderStage(worker, ImageRenderStage::FinalizeImage, eyeStage);
 						if(swapEye())
@@ -365,13 +365,13 @@ util::EventReply pragma::scenekit::cycles::Renderer::HandleRenderStage(RenderWor
 	}
 	if(optResult)
 		*optResult = pragma::scenekit::Renderer::RenderStageResult::Continue;
-	return util::EventReply::Handled;
+	return pragma::util::EventReply::Handled;
 }
 
 void pragma::scenekit::cycles::Renderer::WaitForRenderStage(RenderWorker &worker, float baseProgress, float progressMultiplier, const std::function<RenderStageResult()> &fOnComplete)
 {
 	for(;;) {
-		worker.UpdateProgress(baseProgress + umath::min(m_cclSession->progress.get_progress(), 1.0) * progressMultiplier);
+		worker.UpdateProgress(baseProgress + pragma::math::min(m_cclSession->progress.get_progress(), 1.0) * progressMultiplier);
 
 		if(worker.IsCancelled())
 			SetCancelled("Cancelled by application.");
@@ -383,8 +383,8 @@ void pragma::scenekit::cycles::Renderer::WaitForRenderStage(RenderWorker &worker
 			continue;
 		}
 
-		if(umath::is_flag_set(m_stateFlags, StateFlags::ReloadSessionScheduled) && (!m_displayDriver || m_displayDriver->WasTileWritten())) {
-			umath::set_flag(m_stateFlags, StateFlags::ReloadSessionScheduled, false);
+		if(pragma::math::is_flag_set(m_stateFlags, StateFlags::ReloadSessionScheduled) && (!m_displayDriver || m_displayDriver->WasTileWritten())) {
+			pragma::math::set_flag(m_stateFlags, StateFlags::ReloadSessionScheduled, false);
 			m_cclScene->camera->need_flags_update = true;
 			m_cclScene->camera->need_device_update = true;
 			m_cclSession->reset(m_sessionParams, m_bufferParams);
@@ -392,7 +392,7 @@ void pragma::scenekit::cycles::Renderer::WaitForRenderStage(RenderWorker &worker
 				m_displayDriver->ResetTileWrittenFlag();
 		}
 
-		if(umath::is_flag_set(m_stateFlags, StateFlags::ProgressiveRefine) && m_progressiveRunning == false)
+		if(pragma::math::is_flag_set(m_stateFlags, StateFlags::ProgressiveRefine) && m_progressiveRunning == false)
 			break;
 		if(m_cclSession->progress.get_cancel()) {
 			if(m_restartState != 0)
@@ -411,7 +411,7 @@ void pragma::scenekit::cycles::Renderer::WaitForRenderStage(RenderWorker &worker
 			auto &logger = pragma::scenekit::get_logger();
 			if(logger)
 				logger->error("Cycles rendering has failed at status '{}' ({}) with error: {}", status, subStatus, m_cclSession->progress.get_error_message());
-			worker.SetStatus(util::JobStatus::Failed, m_cclSession->progress.get_error_message());
+			worker.SetStatus(pragma::util::JobStatus::Failed, m_cclSession->progress.get_error_message());
 			break;
 		}
 		std::string status, subStatus;
@@ -428,16 +428,16 @@ void pragma::scenekit::cycles::Renderer::WaitForRenderStage(RenderWorker &worker
 			if(logger)
 				logger->info("Session status: {} ({})", status, subStatus);
 		}
-		if(umath::min(m_cclSession->progress.get_progress(), 1.0) == 1.0 || status == "Finished") {
+		if(pragma::math::min(m_cclSession->progress.get_progress(), 1.0) == 1.0 || status == "Finished") {
 			SetIsBuildingKernels(false);
 			break;
 		}
 		std::this_thread::sleep_for(std::chrono::milliseconds {100});
 	}
-	if(worker.GetStatus() == util::JobStatus::Pending && fOnComplete != nullptr && fOnComplete() == RenderStageResult::Continue)
+	if(worker.GetStatus() == pragma::util::JobStatus::Pending && fOnComplete != nullptr && fOnComplete() == RenderStageResult::Continue)
 		return;
-	if(worker.GetStatus() == util::JobStatus::Pending)
-		worker.SetStatus(util::JobStatus::Successful);
+	if(worker.GetStatus() == pragma::util::JobStatus::Pending)
+		worker.SetStatus(pragma::util::JobStatus::Successful);
 }
 
 void pragma::scenekit::cycles::Renderer::InitStereoEye(StereoEye eyeStage)
@@ -481,7 +481,7 @@ void pragma::scenekit::cycles::Renderer::ReloadProgressiveRender(bool clearExpos
 	m_tileManager.Reload(waitForPreviousCompletion);
 	if(clearExposure)
 		m_tileManager.SetExposure(1.f);
-	umath::set_flag(m_stateFlags, StateFlags::ProgressiveRefine, false);
+	pragma::math::set_flag(m_stateFlags, StateFlags::ProgressiveRefine, false);
 	m_cclSession->progress.reset();
 }
 
@@ -524,7 +524,7 @@ bool pragma::scenekit::cycles::Renderer::InitializeBakingData()
 	auto *aoTarget = o ? FindCclObject(*o) : nullptr;
 	if(aoTarget == nullptr)
 		return false;
-	m_bakeData = std::make_unique<util::baking::BakeDataView>();
+	m_bakeData = std::make_unique<pragma::util::baking::BakeDataView>();
 	m_bakeData->bakeImageWidth = imgWidth;
 	m_bakeData->bakeImageHeight = imgHeight;
 	auto &pixelArray = m_bakePixels;
@@ -677,7 +677,7 @@ void pragma::scenekit::cycles::Renderer::StartTextureBaking(RenderWorker &worker
 		auto *aoTarget = o ? FindCclObject(*o) : nullptr;
 		if(aoTarget == nullptr)
 		{
-			worker.SetStatus(util::JobStatus::Failed,"Invalid bake target!");
+			worker.SetStatus(pragma::util::JobStatus::Failed,"Invalid bake target!");
 			return;
 		}
 		std::vector<pragma::scenekit::baking::BakePixel> pixelArray;
@@ -714,7 +714,7 @@ void pragma::scenekit::cycles::Renderer::StartTextureBaking(RenderWorker &worker
 		m_cclSession->reset(const_cast<ccl::BufferParams&>(bufferParams), m_cclSession->params.samples);
 		m_cclSession->update_scene();
 
-		auto imgBuffer = uimg::ImageBuffer::Create(imgWidth,imgHeight,uimg::Format::RGBA_FLOAT);
+		auto imgBuffer = image::ImageBuffer::Create(imgWidth,imgHeight,image::Format::RGBA_FLOAT);
 		std::atomic<bool> running = true;
 		//session->progress.set_update_callback(
 		std::thread progressThread {[this,&worker,&running]() {
@@ -732,7 +732,7 @@ void pragma::scenekit::cycles::Renderer::StartTextureBaking(RenderWorker &worker
 		progressThread.join();
 		if(r == false)
 		{
-			worker.SetStatus(util::JobStatus::Failed,"Cycles baking has failed for an unknown reason!");
+			worker.SetStatus(pragma::util::JobStatus::Failed,"Cycles baking has failed for an unknown reason!");
 			return;
 		}
 
@@ -772,10 +772,10 @@ void pragma::scenekit::cycles::Renderer::StartTextureBaking(RenderWorker &worker
 
 			DenoiseHDRImageArea(
 			*imgBuffer,imgWidth,imgHeight,
-			umath::clamp<float>(umath::round(offset.x *static_cast<float>(imgWidth)),0.f,imgWidth) +0.001f, // Add a small offset to make sure something like 2.9999 isn't truncated to 2
-			umath::clamp<float>(umath::round(offset.y *static_cast<float>(imgHeight)),0.f,imgHeight) +0.001f,
-			umath::clamp<float>(umath::round(size.x *static_cast<float>(imgWidth)),0.f,imgWidth) +0.001f,
-			umath::clamp<float>(umath::round(size.y *static_cast<float>(imgHeight)),0.f,imgHeight) +0.001f
+			pragma::math::clamp<float>(pragma::math::round(offset.x *static_cast<float>(imgWidth)),0.f,imgWidth) +0.001f, // Add a small offset to make sure something like 2.9999 isn't truncated to 2
+			pragma::math::clamp<float>(pragma::math::round(offset.y *static_cast<float>(imgHeight)),0.f,imgHeight) +0.001f,
+			pragma::math::clamp<float>(pragma::math::round(size.x *static_cast<float>(imgWidth)),0.f,imgWidth) +0.001f,
+			pragma::math::clamp<float>(pragma::math::round(size.y *static_cast<float>(imgHeight)),0.f,imgHeight) +0.001f
 			);
 			}
 			}
@@ -826,7 +826,7 @@ void pragma::scenekit::cycles::Renderer::StartTextureBaking(RenderWorker &worker
 		{
 			worker.SetResultMessage("Baking margin...");
 
-			imgBuffer->Convert(uimg::Format::RGBA_FLOAT);
+			imgBuffer->Convert(image::Format::RGBA_FLOAT);
 			pragma::scenekit::baking::ImBuf ibuf {};
 			ibuf.x = imgWidth;
 			ibuf.y = imgHeight;
@@ -854,45 +854,45 @@ void pragma::scenekit::cycles::Renderer::StartTextureBaking(RenderWorker &worker
 		{
 			for(auto &pxView : *imgBuffer)
 			{
-				for(auto channel : {uimg::Channel::Red,uimg::Channel::Green,uimg::Channel::Blue})
+				for(auto channel : {image::Channel::Red,image::Channel::Green,image::Channel::Blue})
 					pxView.SetValue(channel,pxView.GetFloatValue(channel) *exposure);
 			}
 		}
 
-		if(umath::is_flag_set(m_scene->GetStateFlags(),Scene::StateFlags::OutputResultWithHDRColors) == false)
+		if(pragma::math::is_flag_set(m_scene->GetStateFlags(),Scene::StateFlags::OutputResultWithHDRColors) == false)
 		{
 			// Convert baked data to rgba8
-			auto imgBufLDR = imgBuffer->Copy(uimg::Format::RGBA_LDR);
-			auto numChannels = umath::to_integral(uimg::Channel::Count);
+			auto imgBufLDR = imgBuffer->Copy(image::Format::RGBA_LDR);
+			auto numChannels = pragma::math::to_integral(image::Channel::Count);
 			auto itSrc = imgBuffer->begin();
 			for(auto &pxViewDst : *imgBufLDR)
 			{
 				auto &pxViewSrc = *itSrc;
 				for(auto i=decltype(numChannels){0u};i<numChannels;++i)
-					pxViewDst.SetValue(static_cast<uimg::Channel>(i),baking::unit_float_to_uchar_clamp(pxViewSrc.GetFloatValue(static_cast<uimg::Channel>(i))));
+					pxViewDst.SetValue(static_cast<image::Channel>(i),baking::unit_float_to_uchar_clamp(pxViewSrc.GetFloatValue(static_cast<image::Channel>(i))));
 				++itSrc;
 			}
 			imgBuffer = imgBufLDR;
-			//auto f = FileManager::OpenFile<VFilePtrReal>("test_ao.png","wb");
-			//uimg::save_image(f,*imgBuffer,uimg::ImageFormat::PNG);
+			//auto f = FileManager::OpenFile<fs::VFilePtrReal>("test_ao.png","wb");
+			//image::save_image(f,*imgBuffer,image::ImageFormat::PNG);
 			//f = nullptr;
 		}
 		else
 		{
 			// Image data is float data, but we only need 16 bits for our purposes
-			auto imgBufHDR = imgBuffer->Copy(uimg::Format::RGBA_HDR);
-			auto numChannels = umath::to_integral(uimg::Channel::Count);
+			auto imgBufHDR = imgBuffer->Copy(image::Format::RGBA_HDR);
+			auto numChannels = pragma::math::to_integral(image::Channel::Count);
 			auto itSrc = imgBuffer->begin();
 			for(auto &pxViewDst : *imgBufHDR)
 			{
 				auto &pxViewSrc = *itSrc;
 				for(auto i=decltype(numChannels){0u};i<numChannels;++i)
-					pxViewDst.SetValue(static_cast<uimg::Channel>(i),static_cast<uint16_t>(umath::float32_to_float16_glm(pxViewSrc.GetFloatValue(static_cast<uimg::Channel>(i)))));
+					pxViewDst.SetValue(static_cast<image::Channel>(i),static_cast<uint16_t>(pragma::math::float32_to_float16_glm(pxViewSrc.GetFloatValue(static_cast<image::Channel>(i)))));
 				++itSrc;
 			}
 			imgBuffer = imgBufHDR;
-			//auto f = FileManager::OpenFile<VFilePtrReal>("test_lightmap.png","wb");
-			//uimg::save_image(f,*imgBuffer,uimg::ImageFormat::PNG);
+			//auto f = FileManager::OpenFile<fs::VFilePtrReal>("test_lightmap.png","wb");
+			//image::save_image(f,*imgBuffer,image::ImageFormat::PNG);
 			//f = nullptr;
 		}
 
@@ -902,7 +902,7 @@ void pragma::scenekit::cycles::Renderer::StartTextureBaking(RenderWorker &worker
 		GetResultImageBuffer(OUTPUT_COLOR) = imgBuffer;
 		// m_cclSession->params.write_render_cb(static_cast<ccl::uchar*>(imgBuffer->GetData()),imgWidth,imgHeight,4 /* channels */);
 		m_cclSession->params.write_render_cb = nullptr; // Make sure it's not called on destruction
-		worker.SetStatus(util::JobStatus::Successful,"Baking has been completed successfully!");
+		worker.SetStatus(pragma::util::JobStatus::Successful,"Baking has been completed successfully!");
 		worker.UpdateProgress(1.f);
 	});
 #endif
@@ -911,7 +911,7 @@ void pragma::scenekit::cycles::Renderer::StartTextureBaking(RenderWorker &worker
 void pragma::scenekit::cycles::Renderer::FinalizeAndCloseCyclesScene()
 {
 	auto stateFlags = m_scene->GetStateFlags();
-	if(m_cclSession && m_outputDriver && m_scene->IsRenderSceneMode(m_scene->GetRenderMode()) && umath::is_flag_set(m_stateFlags, StateFlags::RenderingStarted)) {
+	if(m_cclSession && m_outputDriver && m_scene->IsRenderSceneMode(m_scene->GetRenderMode()) && pragma::math::is_flag_set(m_stateFlags, StateFlags::RenderingStarted)) {
 		auto passType = get_main_pass_type(m_scene->GetRenderMode());
 		if(passType)
 			GetResultImageBuffer(*passType) = GetOutputDriver()->GetImageBuffer(*passType);
@@ -921,7 +921,7 @@ void pragma::scenekit::cycles::Renderer::FinalizeAndCloseCyclesScene()
 
 void pragma::scenekit::cycles::Renderer::CloseRenderScene() { CloseCyclesScene(); }
 
-void pragma::scenekit::cycles::Renderer::FinalizeImage(uimg::ImageBuffer &imgBuf, StereoEye eyeStage)
+void pragma::scenekit::cycles::Renderer::FinalizeImage(image::ImageBuffer &imgBuf, StereoEye eyeStage)
 {
 	if(!m_scene->HasBakeTarget()) // Don't need to flip if we're baking
 		imgBuf.Flip(true, true);
@@ -981,7 +981,7 @@ static std::optional<ccl::PassType> pass_type_to_ccl_pass_type(pragma::scenekit:
 	case pragma::scenekit::PassType::TransmissionColor:
 		return ccl::PassType::PASS_TRANSMISSION_COLOR;
 	}
-	static_assert(umath::to_integral(pragma::scenekit::PassType::Count) == 25, "Update this implementation when new types are added!");
+	static_assert(pragma::math::to_integral(pragma::scenekit::PassType::Count) == 25, "Update this implementation when new types are added!");
 	return {};
 }
 

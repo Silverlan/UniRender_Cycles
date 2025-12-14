@@ -22,7 +22,7 @@ module pragma.scenekit.cycles;
 
 import pragma.scenekit;
 
-void pragma::scenekit::baking::prepare_bake_data(const pragma::scenekit::cycles::Renderer &renderer, pragma::scenekit::Object &o, util::baking::BakePixel *pixelArray, uint32_t numPixels, uint32_t imgWidth, uint32_t imgHeight, bool useLightmapUvs)
+void pragma::scenekit::baking::prepare_bake_data(const pragma::scenekit::cycles::Renderer &renderer, pragma::scenekit::Object &o, pragma::util::baking::BakePixel *pixelArray, uint32_t numPixels, uint32_t imgWidth, uint32_t imgHeight, bool useLightmapUvs)
 {
 	auto objId = renderer.FindCCLObjectId(*renderer.FindCclObject(o));
 	assert(objId.has_value());
@@ -33,17 +33,17 @@ void pragma::scenekit::baking::prepare_bake_data(const pragma::scenekit::cycles:
 	auto &uvs = useLightmapUvs ? mesh.GetLightmapUvs() : mesh.GetUvs();
 	auto numTris = tris.size() / 3;
 
-	util::baking::MeshInterface meshInterface {};
-	meshInterface.getTriangle = [&tris](uint32_t idx) -> util::baking::Triangle {
+	pragma::util::baking::MeshInterface meshInterface {};
+	meshInterface.getTriangle = [&tris](uint32_t idx) -> pragma::util::baking::Triangle {
 		auto offset = idx * 3;
 		return {static_cast<uint32_t>(tris[offset]), static_cast<uint32_t>(tris[offset + 1]), static_cast<uint32_t>(tris[offset + 2])};
 	};
-	meshInterface.getUv = [&uvs](uint32_t vertIdx) -> util::baking::Uv {
+	meshInterface.getUv = [&uvs](uint32_t vertIdx) -> pragma::util::baking::Uv {
 		auto &uv = uvs[vertIdx];
 		return {uv.x, uv.y};
 	};
 
-	util::baking::BakeDataView bd;
+	pragma::util::baking::BakeDataView bd;
 	bd.bakePixels = pixelArray;
 
 	auto &zspan = bd.span;
@@ -53,5 +53,5 @@ void pragma::scenekit::baking::prepare_bake_data(const pragma::scenekit::cycles:
 	zspan.span1.resize(zspan.recty);
 	zspan.span2.resize(zspan.recty);
 
-	util::baking::prepare_bake_pixel_data(bd, *objId, meshInterface, numTris, imgWidth, imgHeight);
+	pragma::util::baking::prepare_bake_pixel_data(bd, *objId, meshInterface, numTris, imgWidth, imgHeight);
 }

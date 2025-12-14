@@ -61,10 +61,10 @@ export namespace pragma::scenekit::cycles {
 		std::mutex m_postProcessingMutex;
 		std::condition_variable m_postProcessingCondition;
 
-		std::vector<std::shared_ptr<uimg::ImageBuffer>> m_tmpImageBuffers;
+		std::vector<std::shared_ptr<image::ImageBuffer>> m_tmpImageBuffers;
 
-		std::vector<std::shared_ptr<uimg::ImageBuffer>> m_mappedTileImageBuffers;
-		std::vector<std::shared_ptr<uimg::ImageBuffer>> m_pendingForPpTileImageBuffers;
+		std::vector<std::shared_ptr<image::ImageBuffer>> m_mappedTileImageBuffers;
+		std::vector<std::shared_ptr<image::ImageBuffer>> m_pendingForPpTileImageBuffers;
 		std::queue<TileInfo> m_imageBufferReadyForPp;
 		std::atomic<bool> m_ppThreadRunning = true;
 	};
@@ -73,11 +73,11 @@ export namespace pragma::scenekit::cycles {
 	  public:
 		struct PassInfo {
 			std::string passName;
-			std::shared_ptr<uimg::ImageBuffer> imageBuffer;
+			std::shared_ptr<image::ImageBuffer> imageBuffer;
 		};
 
-		OutputDriver(const std::vector<std::pair<PassType, uimg::Format>> &passes, uint32_t width, uint32_t height);
-		std::shared_ptr<uimg::ImageBuffer> GetImageBuffer(PassType pass) const;
+		OutputDriver(const std::vector<std::pair<PassType, image::Format>> &passes, uint32_t width, uint32_t height);
+		std::shared_ptr<image::ImageBuffer> GetImageBuffer(PassType pass) const;
 		const std::unordered_map<PassType, PassInfo> &GetImageBuffers() const;
 		void Reset();
 
@@ -93,12 +93,12 @@ export namespace pragma::scenekit::cycles {
 		* true if any data was read. */
 		virtual bool read_render_tile(const Tile & /* tile */) override;
 
-		void SetBakeData(const util::baking::BakeDataView &bakeData);
+		void SetBakeData(const pragma::util::baking::BakeDataView &bakeData);
 	  private:
 		void DebugDumpImages();
 		std::vector<Vector4> m_tileData;
 		std::unordered_map<pragma::scenekit::PassType, PassInfo> m_imageBuffers;
-		const util::baking::BakeDataView *m_bakeData = nullptr;
-		std::vector<std::pair<pragma::scenekit::PassType, uimg::Format>> m_passes;
+		const pragma::util::baking::BakeDataView *m_bakeData = nullptr;
+		std::vector<std::pair<pragma::scenekit::PassType, image::Format>> m_passes;
 	};
 };

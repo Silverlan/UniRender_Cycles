@@ -28,6 +28,6 @@ export namespace pragma::scenekit {
 		class Renderer;
 	};
 	namespace baking {
-		void prepare_bake_data(const cycles::Renderer &renderer, Object &o, util::baking::BakePixel *pixelArray, uint32_t numPixels, uint32_t imgWidth, uint32_t imgHeight, bool useLightmapUvs = false);
+		void prepare_bake_data(const cycles::Renderer &renderer, Object &o, pragma::util::baking::BakePixel *pixelArray, uint32_t numPixels, uint32_t imgWidth, uint32_t imgHeight, bool useLightmapUvs = false);
 	};
 }

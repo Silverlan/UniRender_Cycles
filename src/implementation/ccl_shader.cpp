@@ -98,8 +98,8 @@ ccl::NodeMathType pragma::scenekit::cycles::to_ccl_type(pragma::scenekit::nodes:
 	case pragma::scenekit::nodes::math::MathType::SmoothMax:
 		return ccl::NodeMathType::NODE_MATH_SMOOTH_MAX;
 	}
-	static_assert(umath::to_integral(pragma::scenekit::nodes::math::MathType::Add) == ccl::NodeMathType::NODE_MATH_ADD && umath::to_integral(pragma::scenekit::nodes::math::MathType::SmoothMax) == ccl::NodeMathType::NODE_MATH_SMOOTH_MAX);
-	static_assert(umath::to_integral(pragma::scenekit::nodes::math::MathType::Count) == 40);
+	static_assert(pragma::math::to_integral(pragma::scenekit::nodes::math::MathType::Add) == ccl::NodeMathType::NODE_MATH_ADD && pragma::math::to_integral(pragma::scenekit::nodes::math::MathType::SmoothMax) == ccl::NodeMathType::NODE_MATH_SMOOTH_MAX);
+	static_assert(pragma::math::to_integral(pragma::scenekit::nodes::math::MathType::Count) == 40);
 	// Unreachable
 	return {};
 }
@@ -113,7 +113,7 @@ ccl::NodeVectorTransformType pragma::scenekit::cycles::to_ccl_type(pragma::scene
 	case pragma::scenekit::nodes::vector_transform::Type::Normal:
 		return ccl::NodeVectorTransformType::NODE_VECTOR_TRANSFORM_TYPE_NORMAL;
 	};
-	static_assert(umath::to_integral(pragma::scenekit::nodes::vector_transform::Type::Count) == 4);
+	static_assert(pragma::math::to_integral(pragma::scenekit::nodes::vector_transform::Type::Count) == 4);
 	// Unreachable
 	return {};
 }
@@ -164,8 +164,8 @@ ccl::NodeVectorMathType pragma::scenekit::cycles::to_ccl_type(pragma::scenekit::
 	case pragma::scenekit::nodes::vector_math::MathType::Maximum:
 		return ccl::NodeVectorMathType::NODE_VECTOR_MATH_MAXIMUM;
 	};
-	static_assert(umath::to_integral(pragma::scenekit::nodes::vector_math::MathType::Add) == ccl::NodeVectorMathType::NODE_VECTOR_MATH_ADD && umath::to_integral(pragma::scenekit::nodes::vector_math::MathType::Maximum) == ccl::NodeVectorMathType::NODE_VECTOR_MATH_MAXIMUM);
-	static_assert(umath::to_integral(pragma::scenekit::nodes::vector_math::MathType::Count) == 20);
+	static_assert(pragma::math::to_integral(pragma::scenekit::nodes::vector_math::MathType::Add) == ccl::NodeVectorMathType::NODE_VECTOR_MATH_ADD && pragma::math::to_integral(pragma::scenekit::nodes::vector_math::MathType::Maximum) == ccl::NodeVectorMathType::NODE_VECTOR_MATH_MAXIMUM);
+	static_assert(pragma::math::to_integral(pragma::scenekit::nodes::vector_math::MathType::Count) == 20);
 	// Unreachable
 	return {};
 }
@@ -178,7 +178,7 @@ ccl::ustring pragma::scenekit::cycles::to_ccl_type(pragma::scenekit::ColorSpace 
 	case pragma::scenekit::ColorSpace::Srgb:
 		return ccl::u_colorspace_srgb;
 	}
-	static_assert(umath::to_integral(pragma::scenekit::ColorSpace::Count) == 3);
+	static_assert(pragma::math::to_integral(pragma::scenekit::ColorSpace::Count) == 3);
 	// Unreachable
 	return {};
 }
@@ -191,9 +191,9 @@ ccl::NodeEnvironmentProjection pragma::scenekit::cycles::to_ccl_type(pragma::sce
 	case pragma::scenekit::EnvironmentProjection::MirrorBall:
 		return ccl::NodeEnvironmentProjection::NODE_ENVIRONMENT_MIRROR_BALL;
 	}
-	static_assert(umath::to_integral(pragma::scenekit::EnvironmentProjection::Equirectangular) == ccl::NodeEnvironmentProjection::NODE_ENVIRONMENT_EQUIRECTANGULAR
-	  && umath::to_integral(pragma::scenekit::EnvironmentProjection::MirrorBall) == ccl::NodeEnvironmentProjection::NODE_ENVIRONMENT_MIRROR_BALL);
-	static_assert(umath::to_integral(pragma::scenekit::EnvironmentProjection::Count) == 2);
+	static_assert(pragma::math::to_integral(pragma::scenekit::EnvironmentProjection::Equirectangular) == ccl::NodeEnvironmentProjection::NODE_ENVIRONMENT_EQUIRECTANGULAR
+	  && pragma::math::to_integral(pragma::scenekit::EnvironmentProjection::MirrorBall) == ccl::NodeEnvironmentProjection::NODE_ENVIRONMENT_MIRROR_BALL);
+	static_assert(pragma::math::to_integral(pragma::scenekit::EnvironmentProjection::Count) == 2);
 	// Unreachable
 	return {};
 }
@@ -208,9 +208,9 @@ ccl::ClosureType pragma::scenekit::cycles::to_ccl_type(pragma::scenekit::Closure
 	case pragma::scenekit::ClosureType::BsdfMicroFacetGgxGlass:
 		return ccl::ClosureType::CLOSURE_BSDF_MICROFACET_GGX_GLASS_ID;
 	}
-	static_assert(umath::to_integral(pragma::scenekit::EnvironmentProjection::Equirectangular) == ccl::NodeEnvironmentProjection::NODE_ENVIRONMENT_EQUIRECTANGULAR
-	  && umath::to_integral(pragma::scenekit::EnvironmentProjection::MirrorBall) == ccl::NodeEnvironmentProjection::NODE_ENVIRONMENT_MIRROR_BALL);
-	static_assert(umath::to_integral(pragma::scenekit::ClosureType::Count) == 4);
+	static_assert(pragma::math::to_integral(pragma::scenekit::EnvironmentProjection::Equirectangular) == ccl::NodeEnvironmentProjection::NODE_ENVIRONMENT_EQUIRECTANGULAR
+	  && pragma::math::to_integral(pragma::scenekit::EnvironmentProjection::MirrorBall) == ccl::NodeEnvironmentProjection::NODE_ENVIRONMENT_MIRROR_BALL);
+	static_assert(pragma::math::to_integral(pragma::scenekit::ClosureType::Count) == 4);
 	// Unreachable
 	return {};
 }
@@ -229,8 +229,8 @@ ccl::ImageAlphaType pragma::scenekit::cycles::to_ccl_type(pragma::scenekit::node
 	case pragma::scenekit::nodes::image_texture::AlphaType::Auto:
 		return ccl::ImageAlphaType::IMAGE_ALPHA_AUTO;
 	}
-	static_assert(umath::to_integral(pragma::scenekit::nodes::image_texture::AlphaType::Unassociated) == ccl::ImageAlphaType::IMAGE_ALPHA_UNASSOCIATED && umath::to_integral(pragma::scenekit::nodes::image_texture::AlphaType::Auto) == ccl::ImageAlphaType::IMAGE_ALPHA_AUTO);
-	static_assert(umath::to_integral(pragma::scenekit::nodes::image_texture::AlphaType::Count) == 5);
+	static_assert(pragma::math::to_integral(pragma::scenekit::nodes::image_texture::AlphaType::Unassociated) == ccl::ImageAlphaType::IMAGE_ALPHA_UNASSOCIATED && pragma::math::to_integral(pragma::scenekit::nodes::image_texture::AlphaType::Auto) == ccl::ImageAlphaType::IMAGE_ALPHA_AUTO);
+	static_assert(pragma::math::to_integral(pragma::scenekit::nodes::image_texture::AlphaType::Count) == 5);
 	// Unreachable
 	return {};
 }
@@ -247,8 +247,8 @@ ccl::InterpolationType pragma::scenekit::cycles::to_ccl_type(pragma::scenekit::n
 	case pragma::scenekit::nodes::image_texture::InterpolationType::Smart:
 		return ccl::InterpolationType::INTERPOLATION_SMART;
 	}
-	static_assert(umath::to_integral(pragma::scenekit::nodes::image_texture::InterpolationType::Linear) == ccl::InterpolationType::INTERPOLATION_LINEAR && umath::to_integral(pragma::scenekit::nodes::image_texture::InterpolationType::Smart) == ccl::InterpolationType::INTERPOLATION_SMART);
-	static_assert(umath::to_integral(pragma::scenekit::nodes::image_texture::InterpolationType::Count) == 4);
+	static_assert(pragma::math::to_integral(pragma::scenekit::nodes::image_texture::InterpolationType::Linear) == ccl::InterpolationType::INTERPOLATION_LINEAR && pragma::math::to_integral(pragma::scenekit::nodes::image_texture::InterpolationType::Smart) == ccl::InterpolationType::INTERPOLATION_SMART);
+	static_assert(pragma::math::to_integral(pragma::scenekit::nodes::image_texture::InterpolationType::Count) == 4);
 	// Unreachable
 	return {};
 }
@@ -263,8 +263,8 @@ ccl::ExtensionType pragma::scenekit::cycles::to_ccl_type(pragma::scenekit::nodes
 	case pragma::scenekit::nodes::image_texture::ExtensionType::Clip:
 		return ccl::ExtensionType::EXTENSION_CLIP;
 	}
-	static_assert(umath::to_integral(pragma::scenekit::nodes::image_texture::ExtensionType::Repeat) == ccl::ExtensionType::EXTENSION_REPEAT && umath::to_integral(pragma::scenekit::nodes::image_texture::ExtensionType::Clip) == ccl::ExtensionType::EXTENSION_CLIP);
-	static_assert(umath::to_integral(pragma::scenekit::nodes::image_texture::ExtensionType::Count) == 3);
+	static_assert(pragma::math::to_integral(pragma::scenekit::nodes::image_texture::ExtensionType::Repeat) == ccl::ExtensionType::EXTENSION_REPEAT && pragma::math::to_integral(pragma::scenekit::nodes::image_texture::ExtensionType::Clip) == ccl::ExtensionType::EXTENSION_CLIP);
+	static_assert(pragma::math::to_integral(pragma::scenekit::nodes::image_texture::ExtensionType::Count) == 3);
 	// Unreachable
 	return {};
 }
@@ -281,8 +281,8 @@ ccl::NodeImageProjection pragma::scenekit::cycles::to_ccl_type(pragma::scenekit:
 	case pragma::scenekit::nodes::image_texture::Projection::Tube:
 		return ccl::NodeImageProjection::NODE_IMAGE_PROJ_TUBE;
 	}
-	static_assert(umath::to_integral(pragma::scenekit::nodes::image_texture::Projection::Flat) == ccl::NodeImageProjection::NODE_IMAGE_PROJ_FLAT && umath::to_integral(pragma::scenekit::nodes::image_texture::Projection::Tube) == ccl::NodeImageProjection::NODE_IMAGE_PROJ_TUBE);
-	static_assert(umath::to_integral(pragma::scenekit::nodes::image_texture::Projection::Count) == 4);
+	static_assert(pragma::math::to_integral(pragma::scenekit::nodes::image_texture::Projection::Flat) == ccl::NodeImageProjection::NODE_IMAGE_PROJ_FLAT && pragma::math::to_integral(pragma::scenekit::nodes::image_texture::Projection::Tube) == ccl::NodeImageProjection::NODE_IMAGE_PROJ_TUBE);
+	static_assert(pragma::math::to_integral(pragma::scenekit::nodes::image_texture::Projection::Count) == 4);
 	// Unreachable
 	return {};
 }
@@ -299,8 +299,8 @@ ccl::NodeMappingType pragma::scenekit::cycles::to_ccl_type(pragma::scenekit::nod
 	case pragma::scenekit::nodes::mapping::Type::Normal:
 		return ccl::NodeMappingType::NODE_MAPPING_TYPE_NORMAL;
 	}
-	static_assert(umath::to_integral(pragma::scenekit::nodes::mapping::Type::Point) == ccl::NodeMappingType::NODE_MAPPING_TYPE_POINT && umath::to_integral(pragma::scenekit::nodes::mapping::Type::Normal) == ccl::NodeMappingType::NODE_MAPPING_TYPE_NORMAL);
-	static_assert(umath::to_integral(pragma::scenekit::nodes::mapping::Type::Count) == 4);
+	static_assert(pragma::math::to_integral(pragma::scenekit::nodes::mapping::Type::Point) == ccl::NodeMappingType::NODE_MAPPING_TYPE_POINT && pragma::math::to_integral(pragma::scenekit::nodes::mapping::Type::Normal) == ccl::NodeMappingType::NODE_MAPPING_TYPE_NORMAL);
+	static_assert(pragma::math::to_integral(pragma::scenekit::nodes::mapping::Type::Count) == 4);
 	// Unreachable
 	return {};
 }
@@ -315,8 +315,8 @@ ccl::NodeNormalMapSpace pragma::scenekit::cycles::to_ccl_type(pragma::scenekit::
 	case pragma::scenekit::nodes::normal_map::Space::World:
 		return ccl::NodeNormalMapSpace::NODE_NORMAL_MAP_WORLD;
 	}
-	static_assert(umath::to_integral(pragma::scenekit::nodes::normal_map::Space::Tangent) == ccl::NodeNormalMapSpace::NODE_NORMAL_MAP_TANGENT && umath::to_integral(pragma::scenekit::nodes::normal_map::Space::World) == ccl::NodeNormalMapSpace::NODE_NORMAL_MAP_WORLD);
-	static_assert(umath::to_integral(pragma::scenekit::nodes::normal_map::Space::Count) == 3);
+	static_assert(pragma::math::to_integral(pragma::scenekit::nodes::normal_map::Space::Tangent) == ccl::NodeNormalMapSpace::NODE_NORMAL_MAP_TANGENT && pragma::math::to_integral(pragma::scenekit::nodes::normal_map::Space::World) == ccl::NodeNormalMapSpace::NODE_NORMAL_MAP_WORLD);
+	static_assert(pragma::math::to_integral(pragma::scenekit::nodes::normal_map::Space::Count) == 3);
 	// Unreachable
 	return {};
 }
@@ -365,8 +365,8 @@ ccl::NodeMix pragma::scenekit::cycles::to_ccl_type(pragma::scenekit::nodes::mix:
 	case pragma::scenekit::nodes::mix::Mix::Clamp:
 		return ccl::NodeMix::NODE_MIX_CLAMP;
 	}
-	static_assert(umath::to_integral(pragma::scenekit::nodes::mix::Mix::Blend) == ccl::NodeMix::NODE_MIX_BLEND && umath::to_integral(pragma::scenekit::nodes::mix::Mix::Clamp) == ccl::NodeMix::NODE_MIX_CLAMP);
-	static_assert(umath::to_integral(pragma::scenekit::nodes::mix::Mix::Count) == 20);
+	static_assert(pragma::math::to_integral(pragma::scenekit::nodes::mix::Mix::Blend) == ccl::NodeMix::NODE_MIX_BLEND && pragma::math::to_integral(pragma::scenekit::nodes::mix::Mix::Clamp) == ccl::NodeMix::NODE_MIX_CLAMP);
+	static_assert(pragma::math::to_integral(pragma::scenekit::nodes::mix::Mix::Count) == 20);
 	// Unreachable
 	return {};
 }
@@ -380,9 +380,9 @@ ccl::NodeVectorTransformConvertSpace pragma::scenekit::cycles::to_ccl_type(pragm
 	case pragma::scenekit::nodes::vector_transform::ConvertSpace::Camera:
 		return ccl::NodeVectorTransformConvertSpace::NODE_VECTOR_TRANSFORM_CONVERT_SPACE_CAMERA;
 	}
-	static_assert(umath::to_integral(pragma::scenekit::nodes::vector_transform::ConvertSpace::World) == ccl::NodeVectorTransformConvertSpace::NODE_VECTOR_TRANSFORM_CONVERT_SPACE_WORLD
-	  && umath::to_integral(pragma::scenekit::nodes::vector_transform::ConvertSpace::Camera) == ccl::NodeVectorTransformConvertSpace::NODE_VECTOR_TRANSFORM_CONVERT_SPACE_CAMERA);
-	static_assert(umath::to_integral(pragma::scenekit::nodes::vector_transform::ConvertSpace::Count) == 3);
+	static_assert(pragma::math::to_integral(pragma::scenekit::nodes::vector_transform::ConvertSpace::World) == ccl::NodeVectorTransformConvertSpace::NODE_VECTOR_TRANSFORM_CONVERT_SPACE_WORLD
+	  && pragma::math::to_integral(pragma::scenekit::nodes::vector_transform::ConvertSpace::Camera) == ccl::NodeVectorTransformConvertSpace::NODE_VECTOR_TRANSFORM_CONVERT_SPACE_CAMERA);
+	static_assert(pragma::math::to_integral(pragma::scenekit::nodes::vector_transform::ConvertSpace::Count) == 3);
 	// Unreachable
 	return {};
 }
@@ -454,12 +454,12 @@ std::shared_ptr<pragma::scenekit::CCLShader> pragma::scenekit::CCLShader::Create
 	apiData.GetFromPath("cycles/debug/dump_shader_graphs")(dumpGraphs);
 	if(dumpGraphs) {
 		auto &graph = *shader->m_cclGraph;
-		auto localDumpPath = util::Path::CreatePath("temp/cycles/graph_dump");
-		filemanager::create_path(localDumpPath.GetString());
-		auto dumpPath = util::Path::CreatePath(filemanager::get_program_write_path()) + localDumpPath;
+		auto localDumpPath = pragma::util::Path::CreatePath("temp/cycles/graph_dump");
+		fs::create_path(localDumpPath.GetString());
+		auto dumpPath = pragma::util::Path::CreatePath(fs::get_program_write_path()) + localDumpPath;
 		auto idx = desc.GetIndex();
-		std::string fileName = "graph_" + util::uuid_to_string(util::generate_uuid_v4()) + ".txt";
-		auto filePath = dumpPath + util::Path::CreateFile(fileName);
+		std::string fileName = "graph_" + pragma::util::uuid_to_string(pragma::util::generate_uuid_v4()) + ".txt";
+		auto filePath = dumpPath + pragma::util::Path::CreateFile(fileName);
 		graph.dump_graph(filePath.GetString().c_str());
 	}
 	return shader;
@@ -699,23 +699,23 @@ std::string pragma::scenekit::CCLShader::TranslateInputName(const ccl::ShaderNod
 {
 	// Some Cycles node socket names don't match ours (due to Cycles updates or other reasons), so we'll have to translate them here
 	if(typeid(node) == typeid(ccl::MathNode)) {
-		if(ustring::compare(inputName.c_str(), pragma::scenekit::nodes::math::IN_TYPE, false))
+		if(pragma::string::compare(inputName.c_str(), pragma::scenekit::nodes::math::IN_TYPE, false))
 			return "math_type";
 	}
 	else if(typeid(node) == typeid(ccl::MappingNode)) {
-		if(ustring::compare(inputName.c_str(), pragma::scenekit::nodes::mapping::IN_TYPE, false))
+		if(pragma::string::compare(inputName.c_str(), pragma::scenekit::nodes::mapping::IN_TYPE, false))
 			return "mapping_type";
 	}
 	else if(typeid(node) == typeid(ccl::MixNode)) {
-		if(ustring::compare(inputName.c_str(), pragma::scenekit::nodes::mix::IN_TYPE, false))
+		if(pragma::string::compare(inputName.c_str(), pragma::scenekit::nodes::mix::IN_TYPE, false))
 			return "mix_type";
 	}
 	else if(typeid(node) == typeid(ccl::VectorMathNode)) {
-		if(ustring::compare(inputName.c_str(), pragma::scenekit::nodes::vector_math::IN_TYPE, false))
+		if(pragma::string::compare(inputName.c_str(), pragma::scenekit::nodes::vector_math::IN_TYPE, false))
 			return "math_type";
 	}
 	else if(typeid(node) == typeid(ccl::VectorTransformNode)) {
-		if(ustring::compare(inputName.c_str(), pragma::scenekit::nodes::vector_transform::IN_TYPE, false))
+		if(pragma::string::compare(inputName.c_str(), pragma::scenekit::nodes::vector_transform::IN_TYPE, false))
 			return "transform_type";
 	}
 	return inputName;
@@ -726,7 +726,7 @@ static bool apply_translated_socket_value(const ccl::ShaderNode &shaderNode, con
 {
 	if(typeid(shaderNode) != typeid(TCcl))
 		return false;
-	if(!ustring::compare(socketName.c_str(), targetSocketName.c_str(), false))
+	if(!pragma::string::compare(socketName.c_str(), targetSocketName.c_str(), false))
 		return false;
 	if(sockDesc.dataValue.type != pragma::scenekit::SocketType::Enum)
 		return false;
@@ -820,7 +820,7 @@ void pragma::scenekit::CCLShader::ApplySocketValue(const ccl::ShaderNode &shader
 			if(socketName == "filename") {
 				// Make file paths absolute
 				std::string absPath;
-				if(filemanager::find_absolute_path(v, absPath)) {
+				if(fs::find_absolute_path(v, absPath)) {
 					node.set(sockType, absPath.c_str());
 					break;
 				}
@@ -853,7 +853,7 @@ void pragma::scenekit::CCLShader::ApplySocketValue(const ccl::ShaderNode &shader
 			break;
 		}
 	}
-	static_assert(umath::to_integral(SocketType::Count) == 16);
+	static_assert(pragma::math::to_integral(SocketType::Count) == 16);
 }
 
 void pragma::scenekit::CCLShader::ConvertGroupSocketsToNodes(const GroupNodeDesc &groupDesc, GroupSocketTranslationTable &outGroupIoSockets)

@@ -38,7 +38,7 @@ export namespace pragma::scenekit::cycles {
 		static ccl::float3 ToCyclesPosition(const Vector3 &pos);
 		static ccl::float3 ToCyclesNormal(const Vector3 &n);
 		static ccl::float2 ToCyclesUV(const Vector2 &uv);
-		static ccl::Transform ToCyclesTransform(const umath::ScaledTransform &t, bool applyRotOffset = false, bool inverseDirection = false);
+		static ccl::Transform ToCyclesTransform(const pragma::math::ScaledTransform &t, bool applyRotOffset = false, bool inverseDirection = false);
 		static float ToCyclesLength(float len);
 
 		virtual ~Renderer() override;
@@ -54,12 +54,12 @@ export namespace pragma::scenekit::cycles {
 		virtual void Restart() override;
 		virtual bool ShouldUseProgressiveFloatFormat() const override { return false; }
 		virtual std::optional<std::string> SaveRenderPreview(const std::string &path, std::string &outErr) const override;
-		virtual util::ParallelJob<uimg::ImageLayerSet> StartRender() override;
+		virtual pragma::util::ParallelJob<image::ImageLayerSet> StartRender() override;
 		virtual bool IsFeatureEnabled(Feature feature) const override;
 
 		virtual bool BeginSceneEdit() override;
 		virtual bool EndSceneEdit() override;
-		virtual bool SyncEditedActor(const util::Uuid &uuid) override;
+		virtual bool SyncEditedActor(const pragma::util::Uuid &uuid) override;
 		virtual bool AddLiveActor(pragma::scenekit::WorldObject &actor) override;
 
 		ccl::Object *FindCclObject(const Object &obj);
@@ -97,18 +97,18 @@ export namespace pragma::scenekit::cycles {
 		bool InitializeBakingData();
 		void FinalizeAndCloseCyclesScene();
 		void CloseCyclesScene();
-		void ApplyPostProcessing(uimg::ImageBuffer &imgBuffer, pragma::scenekit::Scene::RenderMode renderMode);
+		void ApplyPostProcessing(image::ImageBuffer &imgBuffer, pragma::scenekit::Scene::RenderMode renderMode);
 		void InitializeAlbedoPass(bool reloadShaders);
 		void InitializeNormalPass(bool reloadShaders);
 		void InitializePassShaders(const std::function<std::shared_ptr<GroupNodeDesc>(const Shader &)> &fGetPassDesc);
 		void AddSkybox(const std::string &texture);
-		virtual util::EventReply HandleRenderStage(RenderWorker &worker, pragma::scenekit::Renderer::ImageRenderStage stage, StereoEye eyeStage, pragma::scenekit::Renderer::RenderStageResult *optResult = nullptr) override;
+		virtual pragma::util::EventReply HandleRenderStage(RenderWorker &worker, pragma::scenekit::Renderer::ImageRenderStage stage, StereoEye eyeStage, pragma::scenekit::Renderer::RenderStageResult *optResult = nullptr) override;
 		void WaitForRenderStage(RenderWorker &worker, float baseProgress, float progressMultiplier, const std::function<pragma::scenekit::Renderer::RenderStageResult()> &fOnComplete);
 		void StartTextureBaking(RenderWorker &worker);
 		virtual void PrepareCyclesSceneForRendering() override;
 		virtual bool UpdateStereoEye(pragma::scenekit::RenderWorker &worker, pragma::scenekit::Renderer::ImageRenderStage stage, StereoEye &eyeStage) override;
 		virtual void CloseRenderScene() override;
-		virtual void FinalizeImage(uimg::ImageBuffer &imgBuf, StereoEye eyeStage) override;
+		virtual void FinalizeImage(image::ImageBuffer &imgBuf, StereoEye eyeStage) override;
 		void InitStereoEye(StereoEye eyeStage);
 		void ReloadProgressiveRender(bool clearExposure = true, bool waitForPreviousCompletion = false);
 		int GetTileSize() const;
@@ -141,7 +141,7 @@ export namespace pragma::scenekit::cycles {
 		std::unordered_map<const GroupNodeDesc *, size_t> m_shaderCache {};
 		struct CclObjectInfo {
 			ccl::Object *object = nullptr;
-			umath::ScaledTransform lastUpdatePose {};
+			pragma::math::ScaledTransform lastUpdatePose {};
 		};
 		std::unordered_map<const Object *, CclObjectInfo> m_objectToCclObject;
 		std::unordered_map<std::string, const Object *> m_uuidToObject;
@@ -154,8 +154,8 @@ export namespace pragma::scenekit::cycles {
 		std::mutex m_cancelMutex;
 		bool m_cancelled = false;
 
-		std::unique_ptr<util::baking::BakeDataView> m_bakeData = nullptr;
-		std::vector<util::baking::BakePixel> m_bakePixels;
+		std::unique_ptr<pragma::util::baking::BakeDataView> m_bakeData = nullptr;
+		std::vector<pragma::util::baking::BakePixel> m_bakePixels;
 
 		ccl::SessionParams m_sessionParams;
 		ccl::BufferParams m_bufferParams;
@@ -165,7 +165,7 @@ export namespace pragma::scenekit::cycles {
 
 		Scene::RenderMode m_renderMode = Scene::RenderMode::RenderImage;
 	};
-	using namespace umath::scoped_enum::bitwise;
+	using namespace pragma::math::scoped_enum::bitwise;
 };
 export {
 	REGISTER_ENUM_FLAGS(pragma::scenekit::cycles::Renderer::StateFlags)

@@ -56,7 +56,7 @@ static void init_cycles()
 	if(KERNEL_PATH.has_value())
 		cyclesPath = *KERNEL_PATH;
 	else
-		cyclesPath = util::get_program_path();
+		cyclesPath = pragma::util::get_program_path();
 
 	for(auto &c : cyclesPath) {
 		if(c == '\\')
@@ -65,8 +65,8 @@ static void init_cycles()
 	auto kernelPath = cyclesPath;
 	ccl::path_init(kernelPath, kernelPath);
 
-	util::set_env_variable("CYCLES_KERNEL_PATH", kernelPath);
-	util::set_env_variable("CYCLES_SHADER_PATH", kernelPath);
+	pragma::util::set_env_variable("CYCLES_KERNEL_PATH", kernelPath);
+	pragma::util::set_env_variable("CYCLES_SHADER_PATH", kernelPath);
 
 	std::optional<std::string> optixPath {};
 #ifdef _WIN32
@@ -92,7 +92,7 @@ static void init_cycles()
 		auto &logger = pragma::scenekit::get_logger();
 		if(logger)
 			logger->info("Found Optix SDK: {}", *optixPath);
-		util::set_env_variable("OPTIX_ROOT_DIR", *optixPath);
+		pragma::util::set_env_variable("OPTIX_ROOT_DIR", *optixPath);
 		// Note: The above should work, but for some reason it doesn't in some cases?
 		// We'll use putenv as well, just to be sure.
 		putenv(("OPTIX_ROOT_DIR=" + *optixPath).data());
@@ -161,7 +161,7 @@ ccl::float3 pragma::scenekit::cycles::Renderer::ToCyclesNormal(const Vector3 &n)
 
 ccl::float2 pragma::scenekit::cycles::Renderer::ToCyclesUV(const Vector2 &uv) { return ccl::float2 {uv.x, 1.f - uv.y}; }
 
-ccl::Transform pragma::scenekit::cycles::Renderer::ToCyclesTransform(const umath::ScaledTransform &t, bool applyRotOffset, bool inverseDirection)
+ccl::Transform pragma::scenekit::cycles::Renderer::ToCyclesTransform(const pragma::math::ScaledTransform &t, bool applyRotOffset, bool inverseDirection)
 {
 	Vector3 axis;
 	float angle;
@@ -169,7 +169,7 @@ ccl::Transform pragma::scenekit::cycles::Renderer::ToCyclesTransform(const umath
 	auto cclT = ccl::transform_identity();
 	cclT = cclT * ccl::transform_rotate(angle, ToCyclesNormal(axis));
 	if(applyRotOffset)
-		cclT = cclT * ccl::transform_rotate(umath::deg_to_rad(90.f), ccl::float3 {1.f, 0.f, 0.f});
+		cclT = cclT * ccl::transform_rotate(pragma::math::deg_to_rad(90.f), ccl::float3 {1.f, 0.f, 0.f});
 
 	if(inverseDirection) {
 		// For whatever reason the direction of light sources is inversed in cycles.
@@ -194,7 +194,7 @@ std::shared_ptr<pragma::scenekit::cycles::Renderer> pragma::scenekit::cycles::Re
 	renderer->m_renderMode = scene.GetRenderMode();
 
 	auto &createInfo = scene.GetCreateInfo();
-	umath::set_flag(renderer->m_stateFlags, StateFlags::ProgressiveRefine, createInfo.progressiveRefine);
+	pragma::math::set_flag(renderer->m_stateFlags, StateFlags::ProgressiveRefine, createInfo.progressiveRefine);
 	auto &sceneInfo = scene.GetSceneInfo();
 	const_cast<Scene::SceneInfo &>(sceneInfo).exposure = createInfo.exposure; // TODO: This doesn't belong here!
 	return renderer;
@@ -249,7 +249,7 @@ ccl::SessionParams pragma::scenekit::cycles::Renderer::GetSessionParameters(cons
 		}
 	}
 
-	if(umath::is_flag_set(m_stateFlags, StateFlags::ProgressiveRefine))
+	if(pragma::math::is_flag_set(m_stateFlags, StateFlags::ProgressiveRefine))
 		sessionParams.samples = 50'000;
 
 #ifdef ENABLE_TEST_AMBIENT_OCCLUSION
@@ -333,7 +333,7 @@ std::optional<ccl::DeviceInfo> pragma::scenekit::cycles::Renderer::InitializeDev
 			cclDeviceType = ccl::DeviceType::DEVICE_CPU;
 			break;
 		}
-		static_assert(umath::to_integral(pragma::scenekit::Scene::DeviceType::Count) == 2);
+		static_assert(pragma::math::to_integral(pragma::scenekit::Scene::DeviceType::Count) == 2);
 
 	endLoop:;
 	}
@@ -671,18 +671,18 @@ void pragma::scenekit::cycles::Renderer::SyncCamera(const pragma::scenekit::Came
 	cclCam.set_full_height(cam.GetHeight());
 	cclCam.set_nearclip(cam.GetNearZ());
 	cclCam.set_farclip(cam.GetFarZ());
-	cclCam.set_fov(umath::deg_to_rad(cam.GetFov()));
+	cclCam.set_fov(pragma::math::deg_to_rad(cam.GetFov()));
 	cclCam.set_focaldistance(cam.GetFocalDistance());
 	cclCam.set_aperturesize(cam.GetApertureSize());
 	cclCam.set_aperture_ratio(cam.GetApertureRatio());
 	cclCam.set_blades(cam.GetBladeCount());
-	cclCam.set_bladesrotation(umath::deg_to_rad(cam.GetBladesRotation()));
+	cclCam.set_bladesrotation(pragma::math::deg_to_rad(cam.GetBladesRotation()));
 	auto interocDistMeters = cam.GetInterocularDistance() * 0.001; // mm -> m
 	cclCam.set_interocular_distance(interocDistMeters);
-	cclCam.set_longitude_max(umath::deg_to_rad(cam.GetLongitudeMax()));
-	cclCam.set_longitude_min(umath::deg_to_rad(cam.GetLongitudeMin()));
-	cclCam.set_latitude_max(umath::deg_to_rad(cam.GetLatitudeMax()));
-	cclCam.set_latitude_min(umath::deg_to_rad(cam.GetLatitudeMin()));
+	cclCam.set_longitude_max(pragma::math::deg_to_rad(cam.GetLongitudeMax()));
+	cclCam.set_longitude_min(pragma::math::deg_to_rad(cam.GetLongitudeMin()));
+	cclCam.set_latitude_max(pragma::math::deg_to_rad(cam.GetLatitudeMax()));
+	cclCam.set_latitude_min(pragma::math::deg_to_rad(cam.GetLatitudeMin()));
 	cclCam.set_use_spherical_stereo(cam.IsStereoscopic());
 
 #ifdef ENABLE_MOTION_BLUR_TEST
@@ -722,17 +722,17 @@ void pragma::scenekit::cycles::Renderer::SyncCamera(const pragma::scenekit::Came
 		logger->info("\tHeight: {}", cclCam.get_full_height());
 		logger->info("\tNearZ: {}", cclCam.get_nearclip());
 		logger->info("\tFarZ: {}", cclCam.get_farclip());
-		logger->info("\tFOV: {}", umath::rad_to_deg(cclCam.get_fov()));
+		logger->info("\tFOV: {}", pragma::math::rad_to_deg(cclCam.get_fov()));
 		logger->info("\tFocal Distance: {}", cclCam.get_focaldistance());
 		logger->info("\tAperture Size: {}", cclCam.get_aperturesize());
 		logger->info("\tAperture Ratio: {}", cclCam.get_aperture_ratio());
 		logger->info("\tBlades: {}", cclCam.get_blades());
-		logger->info("\tBlades Rotation: {}", umath::rad_to_deg(cclCam.get_bladesrotation()));
+		logger->info("\tBlades Rotation: {}", pragma::math::rad_to_deg(cclCam.get_bladesrotation()));
 		logger->info("\tInterocular Distance: {}", cclCam.get_interocular_distance());
-		logger->info("\tLongitude Max: {}", umath::rad_to_deg(cclCam.get_longitude_max()));
-		logger->info("\tLongitude Min: {}", umath::rad_to_deg(cclCam.get_longitude_min()));
-		logger->info("\tLatitude Max: {}", umath::rad_to_deg(cclCam.get_latitude_max()));
-		logger->info("\tLatitude Min: {}", umath::rad_to_deg(cclCam.get_latitude_min()));
+		logger->info("\tLongitude Max: {}", pragma::math::rad_to_deg(cclCam.get_longitude_max()));
+		logger->info("\tLongitude Min: {}", pragma::math::rad_to_deg(cclCam.get_longitude_min()));
+		logger->info("\tLatitude Max: {}", pragma::math::rad_to_deg(cclCam.get_latitude_max()));
+		logger->info("\tLatitude Min: {}", pragma::math::rad_to_deg(cclCam.get_latitude_min()));
 		logger->info("\tStereoscopic: {}", cclCam.get_use_spherical_stereo());
 
 		std::stringstream ssMatrix;
@@ -892,7 +892,7 @@ void pragma::scenekit::cycles::Renderer::SyncLight(pragma::scenekit::Scene &scen
 	case pragma::scenekit::Light::Type::Spot:
 		{
 			cclLight->set_spot_smooth(light.GetBlendFraction());
-			cclLight->set_spot_angle(umath::deg_to_rad(light.GetOuterConeAngle()));
+			cclLight->set_spot_angle(pragma::math::deg_to_rad(light.GetOuterConeAngle()));
 			break;
 		}
 	case pragma::scenekit::Light::Type::Directional:
@@ -962,7 +962,7 @@ void pragma::scenekit::cycles::Renderer::SyncLight(pragma::scenekit::Scene &scen
 	cclLight->set_max_bounces(1'024);
 	cclLight->set_map_resolution(2'048);
 
-	auto uuid = util::uuid_to_string(light.GetUuid());
+	auto uuid = pragma::util::uuid_to_string(light.GetUuid());
 	auto udmLight = apiData.GetFromPath("cycles/scene/actors/" + uuid);
 	if(udmLight) {
 		uint32_t maxBounces;
@@ -1032,7 +1032,7 @@ void pragma::scenekit::cycles::Renderer::Wait()
 		m_cclSession->wait();
 }
 
-void pragma::scenekit::cycles::Renderer::ApplyPostProcessing(uimg::ImageBuffer &imgBuffer, pragma::scenekit::Scene::RenderMode renderMode)
+void pragma::scenekit::cycles::Renderer::ApplyPostProcessing(image::ImageBuffer &imgBuffer, pragma::scenekit::Scene::RenderMode renderMode)
 {
 	// For some reason the image is flipped horizontally when rendering an image,
 	// so we'll just flip it the right way here
@@ -1421,7 +1421,7 @@ bool pragma::scenekit::cycles::Renderer::AddLiveActor(pragma::scenekit::WorldObj
 	it->second->Finalize(*m_scene);
 	return true;
 }
-bool pragma::scenekit::cycles::Renderer::SyncEditedActor(const util::Uuid &uuid)
+bool pragma::scenekit::cycles::Renderer::SyncEditedActor(const pragma::util::Uuid &uuid)
 {
 	auto *actor = FindActor(uuid);
 	if(!actor)
@@ -1432,7 +1432,7 @@ bool pragma::scenekit::cycles::Renderer::SyncEditedActor(const util::Uuid &uuid)
 		SyncLight(*m_scene, static_cast<Light &>(*actor), true);
 	else if(typeid(*actor) == typeid(Object)) {
 		auto &o = *static_cast<Object *>(actor);
-		auto it = m_uuidToObject.find(util::uuid_to_string(o.GetUuid()));
+		auto it = m_uuidToObject.find(pragma::util::uuid_to_string(o.GetUuid()));
 		if(it != m_uuidToObject.end()) {
 			auto it2 = m_objectToCclObject.find(it->second);
 			if(it2 != m_objectToCclObject.end()) {
@@ -1469,7 +1469,7 @@ bool pragma::scenekit::cycles::Renderer::SyncEditedActor(const util::Uuid &uuid)
 	}
 	else
 		return false;
-	umath::set_flag(m_stateFlags, StateFlags::ReloadSessionScheduled);
+	pragma::math::set_flag(m_stateFlags, StateFlags::ReloadSessionScheduled);
 	return true;
 }
 
@@ -1517,10 +1517,10 @@ bool pragma::scenekit::cycles::Renderer::Initialize(pragma::scenekit::Scene &sce
 	auto nativeDenoising = false;
 	auto udmDebug = apiData.GetFromPath("cycles/debug");
 	udmDebug["nativeDenoising"](nativeDenoising);
-	umath::set_flag(m_stateFlags, StateFlags::NativeDenoising, nativeDenoising);
+	pragma::math::set_flag(m_stateFlags, StateFlags::NativeDenoising, nativeDenoising);
 
 	auto denoiserType = ccl::DenoiserType::DENOISER_NONE;
-	if(!umath::is_flag_set(m_stateFlags, StateFlags::NativeDenoising)) {
+	if(!pragma::math::is_flag_set(m_stateFlags, StateFlags::NativeDenoising)) {
 		auto denoiseMode = m_scene->GetDenoiseMode();
 		std::vector<ccl::DenoiserType> denoisePreferenceOrder;
 		if(denoiseMode == Scene::DenoiseMode::AutoFast || denoiseMode == Scene::DenoiseMode::AutoDetailed || denoiseMode == Scene::DenoiseMode::Optix) {
@@ -1541,7 +1541,7 @@ bool pragma::scenekit::cycles::Renderer::Initialize(pragma::scenekit::Scene &sce
 		}
 
 		if(denoiserType == ccl::DenoiserType::DENOISER_NONE && denoiseMode != Scene::DenoiseMode::None)
-			umath::set_flag(m_stateFlags, StateFlags::NativeDenoising); // No Cycles denoising available; Fall back to native denoising
+			pragma::math::set_flag(m_stateFlags, StateFlags::NativeDenoising); // No Cycles denoising available; Fall back to native denoising
 	}
 
 	switch(scene.GetRenderMode()) {
@@ -1552,7 +1552,7 @@ bool pragma::scenekit::cycles::Renderer::Initialize(pragma::scenekit::Scene &sce
 	case pragma::scenekit::Scene::RenderMode::RenderImage:
 		{
 			AddPass(PassType::Combined);
-			if(umath::is_flag_set(m_stateFlags, StateFlags::NativeDenoising)) {
+			if(pragma::math::is_flag_set(m_stateFlags, StateFlags::NativeDenoising)) {
 				AddPass(PassType::Albedo);
 				AddPass(PassType::Normals);
 			}
@@ -1583,7 +1583,7 @@ bool pragma::scenekit::cycles::Renderer::Initialize(pragma::scenekit::Scene &sce
 		m_cclScene->integrator->set_denoiser_type(denoiserType);
 		m_cclScene->integrator->set_denoise_start_sample(1);
 		// m_cclScene->integrator->set_denoiser_prefilter(ccl::DenoiserPrefilter::DENOISER_PREFILTER_FAST);
-		if(umath::is_flag_set(static_cast<pragma::scenekit::Renderer::Flags>(m_flags), Flags::EnableLiveEditing)) {
+		if(pragma::math::is_flag_set(static_cast<pragma::scenekit::Renderer::Flags>(m_flags), Flags::EnableLiveEditing)) {
 			m_cclScene->integrator->set_use_denoise_pass_albedo(true);
 			m_cclScene->integrator->set_use_denoise_pass_normal(false);
 		}
@@ -1597,8 +1597,8 @@ bool pragma::scenekit::cycles::Renderer::Initialize(pragma::scenekit::Scene &sce
 		std::string outputFileName;
 		if(!udmDebugScene["outputFileName"](outputFileName)) {
 			outputFileName = "temp/cycles/";
-			filemanager::create_path(outputFileName);
-			outputFileName = util::FilePath(filemanager::get_program_write_path(), outputFileName, "debug_scene.png").GetString();
+			fs::create_path(outputFileName);
+			outputFileName = util::FilePath(fs::get_program_write_path(), outputFileName, "debug_scene.png").GetString();
 		}
 		std::vector<std::string> xmlFiles;
 		udmDebugScene["xmlFiles"](xmlFiles);
@@ -1612,7 +1612,7 @@ bool pragma::scenekit::cycles::Renderer::Initialize(pragma::scenekit::Scene &sce
 
 	if(m_scene->GetSceneInfo().sky.empty() == false)
 		AddSkybox(m_scene->GetSceneInfo().sky);
-	umath::set_flag(m_stateFlags, StateFlags::RenderingStarted);
+	pragma::math::set_flag(m_stateFlags, StateFlags::RenderingStarted);
 
 	auto &mdlCache = m_renderData.modelCache;
 	mdlCache->GenerateData();
@@ -1702,10 +1702,10 @@ bool pragma::scenekit::cycles::Renderer::Initialize(pragma::scenekit::Scene &sce
 		m_tileManager.SetExposure(sceneInfo.exposure);
 	}
 
-	std::vector<std::pair<PassType, uimg::Format>> passes;
+	std::vector<std::pair<PassType, image::Format>> passes;
 	passes.reserve(m_passes.size());
 	for(auto &pair : m_passes)
-		passes.push_back({pair.first, uimg::Format::RGBA32});
+		passes.push_back({pair.first, image::Format::RGBA32});
 
 	if(m_scene->HasBakeTarget() && !InitializeBakingData()) {
 		outErr = "Failed to initialize bake data.";
@@ -2071,9 +2071,9 @@ std::optional<std::string> pragma::scenekit::cycles::Renderer::SaveRenderPreview
 
 void pragma::scenekit::cycles::Renderer::AddSkybox(const std::string &texture)
 {
-	if(umath::is_flag_set(m_stateFlags, StateFlags::SkyInitialized))
+	if(pragma::math::is_flag_set(m_stateFlags, StateFlags::SkyInitialized))
 		return;
-	umath::set_flag(m_stateFlags, StateFlags::SkyInitialized);
+	pragma::math::set_flag(m_stateFlags, StateFlags::SkyInitialized);
 
 	if(m_renderMode == Scene::RenderMode::SceneDepth) {
 		auto desc = pragma::scenekit::GroupNodeDesc::Create(m_scene->GetShaderNodeManager());
@@ -2145,9 +2145,9 @@ bool pragma::scenekit::cycles::Renderer::IsFeatureEnabled(Feature feature) const
 	return pragma::scenekit::Renderer::IsFeatureEnabled(feature);
 }
 
-util::ParallelJob<uimg::ImageLayerSet> pragma::scenekit::cycles::Renderer::StartRender()
+pragma::util::ParallelJob<pragma::image::ImageLayerSet> pragma::scenekit::cycles::Renderer::StartRender()
 {
-	auto job = util::create_parallel_job<RenderWorker>(*this);
+	auto job = pragma::util::create_parallel_job<RenderWorker>(*this);
 	auto &worker = static_cast<RenderWorker &>(job.GetWorker());
 	StartNextRenderStage(worker, ImageRenderStage::InitializeScene, StereoEye::None);
 	return job;
@@ -2200,8 +2200,8 @@ extern "C" {
 bool DLLEXPORT create_renderer(const pragma::scenekit::Scene &scene, pragma::scenekit::Renderer::Flags flags, std::shared_ptr<pragma::scenekit::Renderer> &outRenderer, std::string &outErr)
 {
 	std::string kernelPath = "modules/unirender/cycles";
-	if(!filemanager::find_absolute_path(kernelPath, kernelPath))
-		kernelPath = util::DirPath(util::get_program_path(), kernelPath).GetString();
+	if(!pragma::fs::find_absolute_path(kernelPath, kernelPath))
+		kernelPath = pragma::util::DirPath(pragma::util::get_program_path(), kernelPath).GetString();
 	set_kernel_path(kernelPath);
 
 	// Cycles can build the kernels during runtime if they don't exist, but unfortunately
@@ -2209,12 +2209,12 @@ bool DLLEXPORT create_renderer(const pragma::scenekit::Scene &scene, pragma::sce
 	// prebuilt if that is the case).
 	// We'll remove the lib directory if it is empty to enable runtime kernel building if there are no prebuilt kernels.
 	auto libPath = kernelPath + "/lib";
-	if(filemanager::exists_system(libPath)) {
+	if(pragma::fs::exists_system(libPath)) {
 		std::vector<std::string> files;
 		std::vector<std::string> dirs;
-		filemanager::find_system_files(libPath + "/*", &files, &dirs);
+		pragma::fs::find_system_files(libPath + "/*", &files, &dirs);
 		if(files.empty() && dirs.empty())
-			filemanager::remove_system_directory(libPath);
+			pragma::fs::remove_system_directory(libPath);
 	}
 
 	outRenderer = pragma::scenekit::cycles::Renderer::Create(scene, outErr, flags);
