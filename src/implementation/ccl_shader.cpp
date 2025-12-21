@@ -14,6 +14,8 @@ module pragma.scenekit.cycles;
 
 import pragma.scenekit;
 
+#undef CreateFile
+
 ccl::NodeMathType pragma::scenekit::cycles::to_ccl_type(pragma::scenekit::nodes::math::MathType type)
 {
 	switch(type) {

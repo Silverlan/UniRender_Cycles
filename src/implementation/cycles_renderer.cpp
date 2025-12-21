@@ -75,7 +75,7 @@ static void init_cycles()
 		std::string path = szPath;
 		path += "/NVIDIA Corporation/";
 		std::vector<std::string> dirs;
-		FileManager::FindSystemFiles((path + "OptiX SDK*").c_str(), nullptr, &dirs);
+		pragma::fs::find_system_files(path + "OptiX SDK*", nullptr, &dirs);
 		if(!dirs.empty()) {
 			std::sort(dirs.begin(), dirs.end());
 			auto dir = dirs.back(); // Presumably the latest version of the SDK
