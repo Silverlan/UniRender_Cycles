@@ -601,7 +601,12 @@ static void MergeVertsFast(int piTriList_in_and_out[], STmpVert pTmpVert[], cons
 	fSep = 0.5f*(fvMax[channel]+fvMin[channel]);
 
 	// stop if all vertices are NaNs
+#if defined(__linux__) && defined(__clang__)
+	// isinfinite causes a undefined reference to `isfinite' error when compiling with clang on linux, so we'll use a workaround.
+	if (!__builtin_isfinite(fSep))
+#else
 	if (!isfinite(fSep))
+#endif
 		return;
 
 	// terminate recursion when the separation/average value
