@@ -66,7 +66,7 @@ jobs:
         id: build-deps
         with:
           # This will build the core dependencies, as well as cycles, but not Pragma
-          build-args: "--with-essential-client-modules=0 --with-common-modules=0 --with-lua-debugger=0 --module pr_unirender:\"https://github.com/Silverlan/pr_cycles.git\" --build 0 --build-cycles"
+          build-args: "--with-essential-client-modules=0 --with-common-modules=0 --with-lua-debugger=0 --module pr_unirender:\"https://github.com/Silverlan/pr_cycles.git\" --build 0 --build-cycles --toolset=clang"
 
       # Note: The libraries need to correspond to the ones in build.py and build_cycles.py
       - name: Build UniRender_cycles
@@ -103,3 +103,4 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           commit: ${{ github.ref_name }}
           tag: '${{ steps.build_tag_name.outputs.tag_name }}'
+          release_suffix: '-clang'
