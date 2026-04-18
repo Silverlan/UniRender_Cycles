@@ -1506,7 +1506,7 @@ bool pragma::scenekit::cycles::Renderer::Initialize(pragma::scenekit::Scene &sce
 		if(logger)
 			logger->info("Selected device: {}", deviceName);
 
-		auto strSamples = std::to_string(samples);
+		auto strSamples = util::to_string(samples);
 		const char *args[] = {"", xmlFile.c_str(), "--output", outputFile.c_str(), "--samples", strSamples.c_str(), "--device", deviceName.c_str(), "--background"};
 		cycles_standalone_test(9, args, false);
 		return false;

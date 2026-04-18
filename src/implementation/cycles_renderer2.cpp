@@ -156,7 +156,7 @@ pragma::util::EventReply pragma::scenekit::cycles::Renderer::HandleRenderStage(R
 						initialRenderStage = ImageRenderStage::Lighting;
 						break;
 						//default:
-						//	throw std::invalid_argument{"Invalid render mode " +std::to_string(pragma::math::to_integral(m_renderMode))};
+						//	throw std::invalid_argument{"Invalid render mode " +util::to_string(pragma::math::to_integral(m_renderMode))};
 					}
 					StartNextRenderStage(worker, initialRenderStage, stereoscopic ? StereoEye::Left : StereoEye::None);
 					worker.Start();

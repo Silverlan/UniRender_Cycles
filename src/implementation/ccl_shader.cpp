@@ -959,4 +959,4 @@ ccl::ShaderOutput *pragma::scenekit::CCLShader::FindOutput(ccl::ShaderNode &node
 	return nullptr;
 }
 
-std::string pragma::scenekit::CCLShader::GetCurrentInternalNodeName() const { return "internal_" + std::to_string(m_cclGraph->nodes.size()); }
+std::string pragma::scenekit::CCLShader::GetCurrentInternalNodeName() const { return "internal_" + util::to_string(m_cclGraph->nodes.size()); }
