@@ -30,7 +30,7 @@ jobs:
       fail-fast: false
       matrix:
         config:
-          - os: windows-latest
+          - os: windows-2022
             name: "Windows x64 MSVC"
     steps:
       - name: Build Tag Name
