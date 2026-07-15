@@ -90,6 +90,9 @@ jobs:
           cp -a "${staging}/png" release/
           cp -a "${staging}/tiff" release/
           cp -a "${staging}/zstd" release/
+          if [ "$RUNNER_OS" == "Linux" ]; then
+            cp -a "${staging}/level-zero" release/
+          fi
 
           cp -a "${staging}/cycles" release/
           cp -a "${staging}/imath" release/
