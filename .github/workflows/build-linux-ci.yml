@@ -59,9 +59,9 @@ jobs:
           python-version: '3.11'
 
       - name: Install Cuda
-        uses: Jimver/cuda-toolkit@v0.2.23
+        uses: Jimver/cuda-toolkit@v0.2.25
         with:
-          cuda: '12.8.1'
+          cuda: '13.2.0'
           use-github-cache: false
           use-local-cache: true
           linux-local-args: '["--toolkit"]'
