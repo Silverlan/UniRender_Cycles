@@ -175,7 +175,7 @@ void pragma::scenekit::cycles::DisplayDriver::unmap_texture_buffer()
 	m_imageBufferReadyForPp.push({tileIndex, m_mappedOffset, m_mappedSize});
 	m_postProcessingCondition.notify_one();
 }
-void pragma::scenekit::cycles::DisplayDriver::clear()
+void pragma::scenekit::cycles::DisplayDriver::zero()
 {
 	// TODO: m_pendingForPpImageBuffer should be cleared as well?
 	for(auto &imgBuf : m_mappedTileImageBuffers) {

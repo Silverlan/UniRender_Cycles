@@ -29,7 +29,7 @@ export namespace pragma::scenekit::cycles {
 		virtual void update_end() override;
 		virtual ccl::half4 *map_texture_buffer() override;
 		virtual void unmap_texture_buffer() override;
-		virtual void clear() override;
+		virtual void zero() override;
 		virtual void draw(const Params &params) override;
 		virtual void next_tile_begin() override;
 
