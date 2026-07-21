@@ -6,6 +6,11 @@ on:
     branches: [ main ]
   workflow_dispatch:
     inputs:
+      pr_cycles_branch:
+        description: 'Branch for the pr_cycles module'
+        required: false
+        default: 'master'
+        type: string
   repository_dispatch:
     types: [trigger-build]
   schedule:
@@ -63,12 +68,25 @@ jobs:
           method: 'network'
           sub-packages: '["nvcc"]'
 
+      - name: Add pr_unirender module to build
+        shell: bash
+        run: |
+          cat << 'EOF' >> pragma/build_scripts/user_modules.py
+          
+          add_pragma_module(
+              name = "pr_unirender",
+              repositoryUrl = "https://github.com/Silverlan/pr_cycles.git",
+              commitSha = None,
+              branch = "${{ inputs.pr_cycles_branch || 'master' }}"
+          )
+          EOF
+
       - name: Build Dependencies
         uses: Silverlan/pragma/github_actions/build@develop
         id: build-deps
         with:
           # This will build the core dependencies, as well as cycles, but not Pragma
-          build-args: "--with-essential-client-modules=0 --with-common-modules=0 --with-lua-debugger=0 --module pr_unirender:\"https://github.com/Silverlan/pr_cycles.git\" --build 0 --build-cycles --toolset=clang"
+          build-args: "--with-essential-client-modules=0 --with-common-modules=0 --with-lua-debugger=0 --build 0 --build-cycles --toolset=clang"
 
       # Note: The libraries need to correspond to the ones in build.py and build_cycles.py
       - name: Build UniRender_cycles
