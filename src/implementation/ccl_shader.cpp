@@ -804,14 +804,14 @@ void pragma::scenekit::CCLShader::ApplySocketValue(const ccl::ShaderNode &shader
 		{
 			static_assert(std::is_same_v<STColor, Vector3> && std::is_same_v<STVector, Vector3> && std::is_same_v<STPoint, Vector3> && std::is_same_v<STNormal, Vector3>);
 			auto &v = *static_cast<STVector *>(sockDesc.dataValue.value.get());
-			node.set(sockType, ccl::float3 {v.x, v.y, v.z});
+			node.set(sockType, ccl::make_float3(v.x, v.y, v.z));
 			break;
 		}
 	case SocketType::Point2:
 		{
 			static_assert(std::is_same_v<STPoint2, Vector2>);
 			auto &v = *static_cast<STPoint2 *>(sockDesc.dataValue.value.get());
-			node.set(sockType, ccl::float2 {v.x, v.y});
+			node.set(sockType, ccl::make_float2(v.x, v.y));
 			break;
 		}
 	case SocketType::String:
@@ -850,7 +850,7 @@ void pragma::scenekit::CCLShader::ApplySocketValue(const ccl::ShaderNode &shader
 		{
 			static_assert(std::is_same_v<STColorArray, std::vector<STColor>>);
 			auto &v = *static_cast<std::vector<STColor> *>(sockDesc.dataValue.value.get());
-			auto cclArray = to_ccl_array<Vector3, ccl::float3>(v, [](const Vector3 &v) -> ccl::float3 { return ccl::float3 {v.x, v.y, v.z}; });
+			auto cclArray = to_ccl_array<Vector3, ccl::float3>(v, [](const Vector3 &v) -> ccl::float3 { return ccl::make_float3(v.x, v.y, v.z); });
 			node.set(sockType, cclArray);
 			break;
 		}
@@ -887,13 +887,13 @@ void pragma::scenekit::CCLShader::ConvertGroupSocketsToNodes(const GroupNodeDesc
 				auto *nodeVec = static_cast<ccl::VectorMathNode *>(AddNode(NODE_VECTOR_MATH));
 				assert(nodeVec);
 				nodeVec->set_math_type(ccl::NodeVectorMathType::NODE_VECTOR_MATH_ADD);
-				nodeVec->set_vector1({0.f, 0.f, 0.f});
-				nodeVec->set_vector2({0.f, 0.f, 0.f});
+				nodeVec->set_vector1(ccl::make_float3(0.f, 0.f, 0.f));
+				nodeVec->set_vector2(ccl::make_float3(0.f, 0.f, 0.f));
 
 				if(socketDesc.dataValue.value) {
 					auto v = socketDesc.dataValue.ToValue<Vector3>();
 					if(v.has_value())
-						nodeVec->set_vector1({v->x, v->y, v->z});
+						nodeVec->set_vector1(ccl::make_float3(v->x, v->y, v->z));
 				}
 				socketTranslation.input = {nodeVec, nodes::vector_math::IN_VECTOR1};
 				socketTranslation.output = {nodeVec, nodes::vector_math::OUT_VECTOR};

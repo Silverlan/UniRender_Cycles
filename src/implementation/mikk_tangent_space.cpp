@@ -26,25 +26,25 @@ module pragma.scenekit.cycles;
 import pragma.scenekit;
 
 struct MikkUserData {
-	MikkUserData(const char *layer_name, const ccl::Mesh *mesh, ccl::float3 *tangent, float *tangent_sign) : mesh(mesh), texface(NULL), orco(NULL), tangent(tangent), tangent_sign(tangent_sign)
+	MikkUserData(const char *layer_name, const ccl::Mesh *mesh, ccl::packed_float3 *tangent, float *tangent_sign) : mesh(mesh), texface(NULL), orco(NULL), tangent(tangent), tangent_sign(tangent_sign)
 	{
 		const ccl::AttributeSet &attributes = (mesh->get_num_subd_faces()) ? mesh->subd_attributes : mesh->attributes;
 
 		ccl::Attribute *attr_vN = attributes.find(ccl::ATTR_STD_VERTEX_NORMAL);
-		vertex_normal = attr_vN->data_float3();
+		vertex_normal = attr_vN->data<ccl::packed_float3>();
 
 		if(layer_name == NULL) {
 			ccl::Attribute *attr_orco = attributes.find(ccl::ATTR_STD_GENERATED);
 
 			if(attr_orco) {
-				orco = attr_orco->data_float3();
+				orco = attr_orco->data<ccl::packed_float3>();
 				// mesh_texture_space(*(BL::Mesh *)&b_mesh, orco_loc, orco_size);
 			}
 		}
 		else {
 			ccl::Attribute *attr_uv = attributes.find(ccl::ustring(layer_name));
 			if(attr_uv != NULL) {
-				texface = attr_uv->data_float2();
+				texface = attr_uv->data<ccl::float2>();
 			}
 		}
 	}
@@ -52,12 +52,12 @@ struct MikkUserData {
 	const ccl::Mesh *mesh;
 	int num_faces;
 
-	ccl::float3 *vertex_normal;
-	ccl::float2 *texface;
-	ccl::float3 *orco;
+	const ccl::packed_float3 *vertex_normal;
+	const ccl::float2 *texface;
+	const ccl::packed_float3 *orco;
 	ccl::float3 orco_loc, orco_size;
 
-	ccl::float3 *tangent;
+	ccl::packed_float3 *tangent;
 	float *tangent_sign;
 };
 
@@ -111,7 +111,7 @@ static void mikk_get_position(const SMikkTSpaceContext *context, float P[3], con
 	const MikkUserData *userdata = (const MikkUserData *)context->m_pUserData;
 	const ccl::Mesh *mesh = userdata->mesh;
 	const int vertex_index = mikk_vertex_index(mesh, face_num, vert_num);
-	const ccl::float3 vP = mesh->get_verts()[vertex_index];
+	const ccl::float3 vP = mesh->get_position()[vertex_index];
 	P[0] = vP.x;
 	P[1] = vP.y;
 	P[2] = vP.z;
@@ -165,7 +165,7 @@ static void mikk_get_normal(const SMikkTSpaceContext *context, float N[3], const
 		}
 		else {
 			const ccl::Mesh::Triangle tri = mesh->get_triangle(face_num);
-			vN = tri.compute_normal(&mesh->get_verts()[0]);
+			vN = tri.compute_normal(mesh->get_position());
 		}
 	}
 	N[0] = vN.x;
@@ -204,7 +204,7 @@ void pragma::scenekit::cycles::compute_tangents(ccl::Mesh *mesh, bool need_sign,
 	else {
 		attr = attributes.add(name, ccl::TypeVector, ccl::ATTR_ELEMENT_CORNER);
 	}
-	ccl::float3 *tangent = attr->data_float3();
+	ccl::packed_float3 *tangent = attr->data_for_write<ccl::packed_float3>();
 	/* Create bitangent sign attribute. */
 	float *tangent_sign = NULL;
 	if(need_sign) {
@@ -224,7 +224,7 @@ void pragma::scenekit::cycles::compute_tangents(ccl::Mesh *mesh, bool need_sign,
 		else {
 			attr_sign = attributes.add(name_sign, ccl::TypeFloat, ccl::ATTR_ELEMENT_CORNER);
 		}
-		tangent_sign = attr_sign->data_float();
+		tangent_sign = attr_sign->data_for_write<float>();
 	}
 	/* Setup userdata. */
 	MikkUserData userdata(layer_name, mesh, tangent, tangent_sign);

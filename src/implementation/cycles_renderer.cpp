@@ -128,7 +128,7 @@ static bool is_device_type_available(ccl::DeviceType type)
 	return ccl::Device::available_devices(DEVICE_MASK(type)).empty() == false;
 }
 
-ccl::float3 pragma::scenekit::cycles::Renderer::ToCyclesVector(const Vector3 &v) { return ccl::float3 {v.x, v.z, v.y}; }
+ccl::float3 pragma::scenekit::cycles::Renderer::ToCyclesVector(const Vector3 &v) { return ccl::make_float3(v.x, v.z, v.y); }
 
 Vector3 pragma::scenekit::cycles::Renderer::ToPragmaPosition(const ccl::float3 &pos)
 {
@@ -142,9 +142,9 @@ ccl::float3 pragma::scenekit::cycles::Renderer::ToCyclesPosition(const Vector3 &
 {
 	auto scale = pragma::units_to_metres(1.f);
 #ifdef ENABLE_TEST_AMBIENT_OCCLUSION
-	ccl::float3 cpos {pos.x, -pos.z, pos.y};
+	ccl::float3 cpos = ccl::make_float3(pos.x, -pos.z, pos.y);
 #else
-	ccl::float3 cpos {-pos.x, pos.y, pos.z};
+	ccl::float3 cpos = ccl::make_float3(-pos.x, pos.y, pos.z);
 #endif
 	cpos = cpos * static_cast<float>(scale);
 	return cpos;
@@ -153,9 +153,9 @@ ccl::float3 pragma::scenekit::cycles::Renderer::ToCyclesPosition(const Vector3 &
 ccl::float3 pragma::scenekit::cycles::Renderer::ToCyclesNormal(const Vector3 &n)
 {
 #ifdef ENABLE_TEST_AMBIENT_OCCLUSION
-	return ccl::float3 {n.x, -n.z, n.y};
+	return ccl::make_float3(n.x, -n.z, n.y);
 #else
-	return ccl::float3 {-n.x, n.y, n.z};
+	return ccl::make_float3(-n.x, n.y, n.z);
 #endif
 }
 
@@ -169,7 +169,7 @@ ccl::Transform pragma::scenekit::cycles::Renderer::ToCyclesTransform(const pragm
 	auto cclT = ccl::transform_identity();
 	cclT = cclT * ccl::transform_rotate(angle, ToCyclesNormal(axis));
 	if(applyRotOffset)
-		cclT = cclT * ccl::transform_rotate(pragma::math::deg_to_rad(90.f), ccl::float3 {1.f, 0.f, 0.f});
+		cclT = cclT * ccl::transform_rotate(pragma::math::deg_to_rad(90.f), ccl::make_float3(1.f, 0.f, 0.f));
 
 	if(inverseDirection) {
 		// For whatever reason the direction of light sources is inversed in cycles.
@@ -489,17 +489,21 @@ void pragma::scenekit::cycles::Renderer::SyncObject(const pragma::scenekit::Obje
 
 		auto numHair = set.strandData.hairSegments.size();
 		uint32_t pointOffset = 0;
-		cclHair->reserve_curves(numHair, set.strandData.points.size());
+		cclHair->resize_curves(numHair, set.strandData.points.size());
 		std::vector<Vector2> testUv;
 		testUv.reserve(numHair);
+		auto *curveFirstKey = cclHair->get_curve_first_key().data();
+		auto *curveRadius = cclHair->get_radius_for_write();
+		auto *curvePosition = cclHair->get_position_for_write();
 		for(auto i = decltype(numHair) {0u}; i < numHair; ++i) {
 			auto numSegments = set.strandData.hairSegments[i];
 			auto numPoints = numSegments + 1;
-			cclHair->add_curve(pointOffset, 0 /* shader */);
+			curveFirstKey[i] = pointOffset;
 			for(auto j = decltype(numPoints) {0u}; j < numPoints; ++j) {
 				auto p = pose * set.strandData.points[pointOffset + j];
 				auto thickness = set.strandData.thicknessData[pointOffset + j];
-				cclHair->add_curve_key(ToCyclesPosition(p), thickness);
+				curveRadius[pointOffset +j] = thickness;
+				curvePosition[pointOffset +j] = ToCyclesPosition(p);
 			}
 			testUv.push_back(set.strandData.uvs[pointOffset]);
 
@@ -556,17 +560,29 @@ void pragma::scenekit::cycles::Renderer::SyncMesh(const pragma::scenekit::Mesh &
 	m_cclMeshToMesh[cclMesh] = &mesh;
 
 	cclMesh->name = mesh.GetName();
-	cclMesh->reserve_mesh(mesh.GetVertexCount(), mesh.GetTriangleCount());
-	for(auto &v : mesh.GetVertices())
-		cclMesh->add_vertex(ToCyclesPosition(v));
+	cclMesh->resize_mesh(mesh.GetVertexCount(), mesh.GetTriangleCount());
+	auto *cclVerts = cclMesh->get_position_for_write();
+	auto &verts = mesh.GetVertices();
+	for(size_t i=0;i<verts.size();++i)
+		cclVerts[i] = ToCyclesPosition(verts[i]);
 	auto &tris = mesh.GetTriangles();
 	auto &shaderIds = mesh.GetShaders();
 	auto &smooth = mesh.GetSmooth();
 	auto ntris = tris.size();
-	for(auto i = decltype(ntris) {0u}; i < ntris; i += 3)
-		cclMesh->add_triangle(tris[i], tris[i + 1], tris[i + 2], shaderIds[i / 3], smooth[i / 3]);
+	auto &cclTris = cclMesh->get_triangles();
+	auto &cclShader = cclMesh->get_shader();
+	auto &cclSmooth = cclMesh->get_smooth();
+	for(auto i = decltype(ntris) {0u}; i < ntris; i += 3) {
+		cclTris[i] = tris[i];
+		cclTris[i +1] = tris[i +1];
+		cclTris[i +2] = tris[i +2];
 
-	auto fToFloat4 = [](const ccl::float3 &v) -> ccl::float4 { return ccl::float4 {v.x, v.y, v.z, 0.f}; };
+		auto triIdx = i /3;
+		cclShader[triIdx] = shaderIds[triIdx];
+		cclSmooth[triIdx] = smooth[triIdx];
+	}
+
+	auto fToFloat4 = [](const ccl::float3 &v) -> ccl::float4 { return ccl::make_float4(v.x, v.y, v.z, 0.f); };
 	auto nrmDbgHandler = GetScene().GetDebugHandler("normal");
 	if(nrmDbgHandler) {
 		auto pData = std::make_shared<Vector3>();
@@ -574,7 +590,7 @@ void pragma::scenekit::cycles::Renderer::SyncMesh(const pragma::scenekit::Mesh &
 			*pData = v;
 			nrmDbgHandler(pData);
 			auto n = *pData;
-			return fToFloat4(ccl::float3 {n.x, n.y, n.z});
+			return fToFloat4(ccl::make_float3(n.x, n.y, n.z));
 		});
 	}
 	else
@@ -632,7 +648,7 @@ void pragma::scenekit::cycles::Renderer::SyncMesh(const pragma::scenekit::Mesh &
 
 	if(cclMesh->need_attribute(m_cclScene, ccl::ATTR_STD_GENERATED)) {
 		auto *attr = cclMesh->attributes.add(ccl::ATTR_STD_GENERATED);
-		memcpy(attr->data_float3(), cclMesh->get_verts().data(), sizeof(ccl::float3) * cclMesh->get_verts().size());
+		memcpy(attr->data_for_write<ccl::packed_float3>(), cclMesh->get_position(), sizeof(ccl::float3) * cclMesh->num_verts());
 	}
 }
 
@@ -692,10 +708,10 @@ void pragma::scenekit::cycles::Renderer::SyncCamera(const pragma::scenekit::Came
 	if(cam.IsDofEnabled() == false)
 		cclCam.set_aperturesize(0.f);
 	auto pose = cam.GetPose();
-	if(cam.GetType() == pragma::scenekit::Camera::CameraType::Panorama) {
+	if(cam.GetType() == Camera::CameraType::Panorama) {
 		auto rot = cam.GetRotation();
 		switch(cam.GetPanoramaType()) {
-		case pragma::scenekit::Camera::PanoramaType::Mirrorball:
+		case Camera::PanoramaType::Mirrorball:
 			rot *= uquat::create(EulerAngles {-90.f, 0.f, 0.f});
 			break;
 		case pragma::scenekit::Camera::PanoramaType::FisheyeEquisolid:
@@ -856,18 +872,37 @@ void pragma::scenekit::cycles::Renderer::SyncLight(pragma::scenekit::Scene &scen
 		cclLight = it->second;
 	}
 	else {
-		auto pcclLight = std::make_unique<ccl::Light>();
+		std::unique_ptr<ccl::Light> pcclLight;
+		switch(light.GetType()) {
+		case Light::Type::Spot:
+			pcclLight = std::make_unique<ccl::SpotLight>();
+			break;
+		case Light::Type::Directional:
+			pcclLight = std::make_unique<ccl::SunLight>();
+			break;
+		case Light::Type::Area:
+			pcclLight = std::make_unique<ccl::AreaLight>();
+			break;
+		case Light::Type::Background:
+			pcclLight = std::make_unique<ccl::BackgroundLight>();
+			break;
+		case Light::Type::Point:
+		default:
+			pcclLight = std::make_unique<ccl::PointLight>();
+			break;
+		}
 		cclLight = pcclLight.get();
 		m_cclScene->lights.push_back(std::move(pcclLight));
 		m_lightToCclLight[&light] = cclLight;
 	}
+
 	cclLight->set_tfm(ccl::transform_identity());
 	switch(light.GetType()) {
 	case pragma::scenekit::Light::Type::Spot:
 		cclLight->set_light_type(ccl::LightType::LIGHT_SPOT);
 		break;
 	case pragma::scenekit::Light::Type::Directional:
-		cclLight->set_light_type(ccl::LightType::LIGHT_DISTANT);
+		cclLight->set_light_type(ccl::LightType::LIGHT_SUN);
 		break;
 	case pragma::scenekit::Light::Type::Area:
 		cclLight->set_light_type(ccl::LightType::LIGHT_AREA);
@@ -1210,7 +1245,7 @@ void pragma::scenekit::cycles::Renderer::AddDebugSky()
 
 	auto bgShader = graph->create_node<ccl::BackgroundNode>();
 	bgShader->set_strength(8.f);
-	bgShader->set_color({1.f, 0.f, 0.f});
+	bgShader->set_color(ccl::make_float3(1.f, 0.f, 0.f));
 	bgShader->name = ccl::ustring {"bg"};
 
 	graph->connect(find_output_socket(*skyTex, "color"), find_input_socket(*bgShader, "color"));
@@ -1228,19 +1263,20 @@ ccl::Mesh *pragma::scenekit::cycles::Renderer::AddDebugMesh()
 
 	cclMesh->name = "floor";
 	auto *mesh = cclMesh;
-	ccl::array<ccl::float3> P_array {};
-	P_array.push_back_slow(ccl::float3 {-3.f, 3.f, 0.f});
-	P_array.push_back_slow(ccl::float3 {3.f, 3.f, 0.f});
-	P_array.push_back_slow(ccl::float3 {3.f, -3.f, 0.f});
-	P_array.push_back_slow(ccl::float3 {-3.f, -3.f, 0.f});
-	mesh->set_verts(P_array);
+	ccl::array<ccl::packed_float3> P_array {};
+	P_array.push_back_slow(ccl::make_float3(-3.f, 3.f, 0.f));
+	P_array.push_back_slow(ccl::make_float3(3.f, 3.f, 0.f));
+	P_array.push_back_slow(ccl::make_float3(3.f, -3.f, 0.f));
+	P_array.push_back_slow(ccl::make_float3(-3.f, -3.f, 0.f));
 
 	size_t num_triangles = 0;
 	ccl::vector<int> nverts {};
 	nverts.push_back(4);
 	for(size_t i = 0; i < nverts.size(); i++)
 		num_triangles += nverts[i] - 2;
-	mesh->reserve_mesh(mesh->get_verts().size(), num_triangles);
+	mesh->resize_mesh(P_array.size(), num_triangles);
+	auto *cclPositions = mesh->get_position_for_write();
+	memcpy(cclPositions, P_array.data(), P_array.size() *sizeof(ccl::float3));
 
 	/* create triangles */
 	int index_offset = 0;
@@ -1252,13 +1288,23 @@ ccl::Mesh *pragma::scenekit::cycles::Renderer::AddDebugMesh()
 	verts.push_back(3);
 	int ishader = 0;
 	bool smooth = true;
+	auto &cclTris = mesh->get_triangles();
+	auto &cclShaders = mesh->get_shader();
+	auto &cclSmooth = mesh->get_smooth();
+	size_t cclIdx = 0;
 	for(size_t i = 0; i < nverts.size(); i++) {
 		for(int j = 0; j < nverts[i] - 2; j++) {
 			int v0 = verts[index_offset];
 			int v1 = verts[index_offset + j + 1];
 			int v2 = verts[index_offset + j + 2];
 
-			mesh->add_triangle(v0, v1, v2, ishader, smooth);
+			auto cclVertIdx = cclIdx *3;
+			cclTris[cclVertIdx] = v0;
+			cclTris[cclVertIdx +1] = v1;
+			cclTris[cclVertIdx +2] = v2;
+			cclShaders[cclIdx] = ishader;
+			cclShaders[cclIdx] = smooth;
+			++cclIdx;
 		}
 
 		index_offset += nverts[i];
@@ -1266,7 +1312,7 @@ ccl::Mesh *pragma::scenekit::cycles::Renderer::AddDebugMesh()
 
 	if(mesh->need_attribute(m_cclScene, ccl::ATTR_STD_GENERATED)) {
 		ccl::Attribute *attr = mesh->attributes.add(ccl::ATTR_STD_GENERATED);
-		memcpy(attr->data_float3(), mesh->get_verts().data(), sizeof(ccl::float3) * mesh->get_verts().size());
+		memcpy(attr->data_for_write<ccl::packed_float3>(), mesh->get_position_for_write(), sizeof(ccl::float3) * mesh->num_verts());
 	}
 	return cclMesh;
 }
@@ -1290,7 +1336,7 @@ void pragma::scenekit::cycles::Renderer::AddDebugLight()
 
 	auto *emissionNode = graph->create_node<ccl::EmissionNode>();
 	emissionNode->name = ccl::ustring {"emission"};
-	emissionNode->set_color(ccl::float3 {0.8f, 0.1f, 0.1f} * 100.f);
+	emissionNode->set_color(ccl::make_float3(0.8f, 0.1f, 0.1f) * 100.f);
 
 	graph->connect(find_output_socket(*emissionNode, "emission"), find_input_socket(*graph->output(), "surface"));
 
@@ -1322,8 +1368,8 @@ ccl::Shader *pragma::scenekit::cycles::Renderer::AddDebugShader()
 
 	auto checkerNode = graph->create_node<ccl::CheckerTextureNode>();
 	checkerNode->name = ccl::ustring {"checker2"};
-	checkerNode->set(*find_type_input(*checkerNode, "color1"), ccl::float3 {0.8f, 0.8f, 0.8f});
-	checkerNode->set(*find_type_input(*checkerNode, "color2"), ccl::float3 {1.f, 0.1f, 0.1f});
+	checkerNode->set(*find_type_input(*checkerNode, "color1"), ccl::make_float3(0.8f, 0.8f, 0.8f));
+	checkerNode->set(*find_type_input(*checkerNode, "color2"), ccl::make_float3(1.f, 0.1f, 0.1f));
 
 	graph->connect(find_output_socket(*checkerNode, "color"), find_input_socket(*glossyNode, "color"));
 	graph->connect(find_output_socket(*glossyNode, "bsdf"), find_input_socket(*graph->output(), "surface"));
@@ -1445,7 +1491,7 @@ bool pragma::scenekit::cycles::Renderer::SyncEditedActor(const pragma::util::Uui
 					auto *cclMesh = static_cast<ccl::Mesh *>(geo);
 					auto *mesh = m_cclMeshToMesh.find(cclMesh)->second;
 					auto &verts = mesh->GetVertices();
-					auto &cclVerts = cclMesh->get_verts();
+					auto *cclVerts = cclMesh->get_position_for_write();
 					for(auto i = decltype(verts.size()) {0u}; i < verts.size(); ++i)
 						cclVerts[i] = ToCyclesPosition(verts[i]);
 

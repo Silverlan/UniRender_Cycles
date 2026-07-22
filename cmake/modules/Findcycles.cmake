@@ -15,7 +15,7 @@ set(cycles_libs
   cycles_device
   cycles_graph
   cycles_integrator
-  cycles_kernel
+  cycles_kernel_cpu
   cycles_scene
   cycles_session
   cycles_subd

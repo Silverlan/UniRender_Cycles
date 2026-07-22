@@ -18,10 +18,11 @@ pr_init_module(${PROJ_NAME})
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake/modules")
 
+pr_add_third_party_dependency(${PROJ_NAME} openjph)
 pr_add_third_party_dependency(${PROJ_NAME} openimageio)
 pr_add_third_party_dependency(${PROJ_NAME} openexr)
 pr_add_third_party_dependency(${PROJ_NAME} jpeg)
-pr_add_third_party_dependency(${PROJ_NAME} tiff)
+# pr_add_third_party_dependency(${PROJ_NAME} tiff)
 pr_add_third_party_dependency(${PROJ_NAME} png)
 pr_add_third_party_dependency(${PROJ_NAME} zstd)
 pr_add_third_party_dependency(${PROJ_NAME} llvm)
