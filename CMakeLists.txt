@@ -81,6 +81,10 @@ if(ROLLBACK_CYCLES_4_1_1)
 	pr_add_compile_definitions(${PROJ_NAME} -DCYCLES_ROLLBACK_411)
 endif()
 
+if(UNIX)
+	target_compile_options(${PROJ_NAME} PRIVATE "-msse4.1")
+endif()
+
 if(WIN32)
 	pr_add_compile_definitions(${PROJ_NAME} -DWITH_CYCLES_LOGGING)
 endif()

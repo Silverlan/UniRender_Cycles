@@ -17,22 +17,23 @@ import pragma.scenekit;
 export namespace pragma::scenekit {
 	namespace cycles {
 		class Renderer;
-		ccl::NodeMathType to_ccl_type(pragma::scenekit::nodes::math::MathType type);
-		ccl::NodeVectorMathType to_ccl_type(pragma::scenekit::nodes::vector_math::MathType type);
-		ccl::NodeVectorTransformType to_ccl_type(pragma::scenekit::nodes::vector_transform::Type type);
-		ccl::ustring to_ccl_type(pragma::scenekit::ColorSpace space);
-		ccl::NodeEnvironmentProjection to_ccl_type(pragma::scenekit::EnvironmentProjection projection);
-		ccl::ClosureType to_ccl_type(pragma::scenekit::ClosureType type);
-		ccl::ImageAlphaType to_ccl_type(pragma::scenekit::nodes::image_texture::AlphaType type);
-		ccl::InterpolationType to_ccl_type(pragma::scenekit::nodes::image_texture::InterpolationType type);
-		ccl::ExtensionType to_ccl_type(pragma::scenekit::nodes::image_texture::ExtensionType type);
-		ccl::NodeImageProjection to_ccl_type(pragma::scenekit::nodes::image_texture::Projection type);
-		ccl::NodeMappingType to_ccl_type(pragma::scenekit::nodes::mapping::Type type);
-		ccl::NodeNormalMapSpace to_ccl_type(pragma::scenekit::nodes::normal_map::Space space);
-		ccl::NodeMix to_ccl_type(pragma::scenekit::nodes::mix::Mix mix);
-		ccl::NodeVectorTransformConvertSpace to_ccl_type(pragma::scenekit::nodes::vector_transform::ConvertSpace convertSpace);
+		ccl::NodeMathType to_ccl_type(nodes::math::MathType type);
+		ccl::NodeVectorMathType to_ccl_type(nodes::vector_math::MathType type);
+		ccl::NodeVectorTransformType to_ccl_type(nodes::vector_transform::Type type);
+		ccl::ustring to_ccl_type(ColorSpace space);
+		ccl::NodeEnvironmentProjection to_ccl_type(EnvironmentProjection projection);
+		ccl::ClosureType to_ccl_type(ClosureType type);
+		ccl::ImageAlphaType to_ccl_type(nodes::image_texture::AlphaType type);
+		ccl::InterpolationType to_ccl_type(nodes::image_texture::InterpolationType type);
+		ccl::ExtensionType to_ccl_type(nodes::image_texture::ExtensionType type);
+		ccl::NodeImageProjection to_ccl_type(nodes::image_texture::Projection type);
+		ccl::NodeMappingType to_ccl_type(nodes::mapping::Type type);
+		ccl::NodeNormalMapSpace to_ccl_type(nodes::normal_map::Space space);
+		ccl::NodeMix to_ccl_type(nodes::mix::Mix mix);
+		ccl::NodeVectorTransformConvertSpace to_ccl_type(nodes::vector_transform::ConvertSpace convertSpace);
+		ccl::NodeCombSepColorType to_ccl_type(nodes::separate_color::ColorType colorType);
 		template<typename T>
-		pragma::scenekit::STEnum to_ccl_enum(pragma::scenekit::STEnum uniEnum)
+		STEnum to_ccl_enum(STEnum uniEnum)
 		{
 			return static_cast<STEnum>(to_ccl_type(static_cast<T>(uniEnum)));
 		}

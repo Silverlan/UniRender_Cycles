@@ -414,8 +414,15 @@ ccl::Mesh *pragma::scenekit::cycles::Renderer::FindCclMesh(const Mesh &mesh)
 }
 ccl::Light *pragma::scenekit::cycles::Renderer::FindCclLight(const Light &light)
 {
-	auto it = m_lightToCclLight.find(&const_cast<Light &>(light));
-	return (it != m_lightToCclLight.end()) ? it->second : nullptr;
+	auto *o = FindCclLightObject(light);
+	if(!o)
+		return nullptr;
+	return static_cast<ccl::Light *>(o->get_geometry());
+}
+ccl::Object *pragma::scenekit::cycles::Renderer::FindCclLightObject(const Light &light)
+{
+	auto it = m_lightToCclObject.find(&const_cast<Light &>(light));
+	return (it != m_lightToCclObject.end()) ? it->second : nullptr;
 }
 
 template<typename TSrc, typename TDst>
@@ -444,7 +451,7 @@ static void copy_vector_to_attribute(const std::vector<T> &data, ccl::Attribute 
 		cclValues.push_back(translate(v));
 
 	attr.resize(cclValues.size());
-	auto *ptr = attr.data();
+	auto *ptr = attr.data_for_write();
 	memcpy(ptr, cclValues.data(), cclValues.size() * sizeof(cclValues[0]));
 }
 
@@ -502,8 +509,8 @@ void pragma::scenekit::cycles::Renderer::SyncObject(const pragma::scenekit::Obje
 			for(auto j = decltype(numPoints) {0u}; j < numPoints; ++j) {
 				auto p = pose * set.strandData.points[pointOffset + j];
 				auto thickness = set.strandData.thicknessData[pointOffset + j];
-				curveRadius[pointOffset +j] = thickness;
-				curvePosition[pointOffset +j] = ToCyclesPosition(p);
+				curveRadius[pointOffset + j] = thickness;
+				curvePosition[pointOffset + j] = ToCyclesPosition(p);
 			}
 			testUv.push_back(set.strandData.uvs[pointOffset]);
 
@@ -563,7 +570,7 @@ void pragma::scenekit::cycles::Renderer::SyncMesh(const pragma::scenekit::Mesh &
 	cclMesh->resize_mesh(mesh.GetVertexCount(), mesh.GetTriangleCount());
 	auto *cclVerts = cclMesh->get_position_for_write();
 	auto &verts = mesh.GetVertices();
-	for(size_t i=0;i<verts.size();++i)
+	for(size_t i = 0; i < verts.size(); ++i)
 		cclVerts[i] = ToCyclesPosition(verts[i]);
 	auto &tris = mesh.GetTriangles();
 	auto &shaderIds = mesh.GetShaders();
@@ -574,10 +581,10 @@ void pragma::scenekit::cycles::Renderer::SyncMesh(const pragma::scenekit::Mesh &
 	auto &cclSmooth = cclMesh->get_smooth();
 	for(auto i = decltype(ntris) {0u}; i < ntris; i += 3) {
 		cclTris[i] = tris[i];
-		cclTris[i +1] = tris[i +1];
-		cclTris[i +2] = tris[i +2];
+		cclTris[i + 1] = tris[i + 1];
+		cclTris[i + 2] = tris[i + 2];
 
-		auto triIdx = i /3;
+		auto triIdx = i / 3;
 		cclShader[triIdx] = shaderIds[triIdx];
 		cclSmooth[triIdx] = smooth[triIdx];
 	}
@@ -862,14 +869,23 @@ void pragma::scenekit::cycles::Renderer::SyncCamera(const pragma::scenekit::Came
 	*(*this)->dicing_camera = cclCam;
 }
 
+static void set_light_shader(ccl::Light &light, ccl::Shader *shader)
+{
+	ccl::array<ccl::Node *> used_shaders;
+	used_shaders.push_back_slow(shader);
+	light.set_used_shaders(used_shaders);
+}
+
 void pragma::scenekit::cycles::Renderer::SyncLight(pragma::scenekit::Scene &scene, const pragma::scenekit::Light &light, bool update)
 {
 	ccl::Light *cclLight = nullptr;
+	ccl::Object *cclLightObject = nullptr;
 	if(update) {
-		auto it = m_lightToCclLight.find(&light);
-		if(it == m_lightToCclLight.end())
+		auto it = m_lightToCclObject.find(&light);
+		if(it == m_lightToCclObject.end())
 			return;
-		cclLight = it->second;
+		cclLightObject = it->second;
+		cclLight = dynamic_cast<ccl::Light *>(cclLightObject->get_geometry());
 	}
 	else {
 		std::unique_ptr<ccl::Light> pcclLight;
@@ -892,47 +908,55 @@ void pragma::scenekit::cycles::Renderer::SyncLight(pragma::scenekit::Scene &scen
 			break;
 		}
 		cclLight = pcclLight.get();
-		m_cclScene->lights.push_back(std::move(pcclLight));
-		m_lightToCclLight[&light] = cclLight;
+
+		auto pobject = std::make_unique<ccl::Object>();
+		auto *object = pobject.get();
+		object->set_geometry(cclLight);
+		object->set_tfm(ccl::transform_identity());
+		m_cclScene->objects.push_back(std::move(pobject));
+		m_lightToCclObject[&light] = object;
+		m_cclLights.push_back(std::move(pcclLight));
+		cclLightObject = object;
 	}
 
-	cclLight->set_tfm(ccl::transform_identity());
+	if(!cclLight || !cclLightObject)
+		throw std::runtime_error {"Invalid light source"};
+
+	cclLightObject->set_tfm(ccl::transform_identity());
 	switch(light.GetType()) {
-	case pragma::scenekit::Light::Type::Spot:
+	case Light::Type::Spot:
 		cclLight->set_light_type(ccl::LightType::LIGHT_SPOT);
 		break;
-	case pragma::scenekit::Light::Type::Directional:
+	case Light::Type::Directional:
 		cclLight->set_light_type(ccl::LightType::LIGHT_SUN);
 		break;
-	case pragma::scenekit::Light::Type::Area:
+	case Light::Type::Area:
 		cclLight->set_light_type(ccl::LightType::LIGHT_AREA);
 		break;
-	case pragma::scenekit::Light::Type::Background:
+	case Light::Type::Background:
 		cclLight->set_light_type(ccl::LightType::LIGHT_BACKGROUND);
 		break;
-	case pragma::scenekit::Light::Type::Triangle:
-		cclLight->set_light_type(ccl::LightType::LIGHT_TRIANGLE);
-		break;
-	case pragma::scenekit::Light::Type::Point:
+	case Light::Type::Point:
 	default:
 		cclLight->set_light_type(ccl::LightType::LIGHT_POINT);
 		break;
 	}
 
 	switch(light.GetType()) {
-	case pragma::scenekit::Light::Type::Point:
+	case Light::Type::Point:
 		{
 			break;
 		}
-	case pragma::scenekit::Light::Type::Spot:
+	case Light::Type::Spot:
 		{
-			cclLight->set_spot_smooth(light.GetBlendFraction());
-			cclLight->set_spot_angle(pragma::math::deg_to_rad(light.GetOuterConeAngle()));
+			auto *cclSpotLight = static_cast<ccl::SpotLight *>(cclLight);
+			cclSpotLight->set_smooth(light.GetBlendFraction());
+			cclSpotLight->set_angle(pragma::math::deg_to_rad(light.GetOuterConeAngle()));
 			break;
 		}
-	case pragma::scenekit::Light::Type::Directional:
+	case Light::Type::Directional:
 		break;
-	case pragma::scenekit::Light::Type::Area:
+	case Light::Type::Area:
 		{
 			auto &axisU = light.GetAxisU();
 			auto &axisV = light.GetAxisV();
@@ -943,33 +967,26 @@ void pragma::scenekit::cycles::Renderer::SyncLight(pragma::scenekit::Scene &scen
 			// It's not quite clear how we should be setting these now.
 			//cclLight->set_axisu(ToCyclesNormal(axisU));
 			//cclLight->set_axisv(ToCyclesNormal(axisV));
-			cclLight->set_sizeu(ToCyclesLength(sizeU));
-			cclLight->set_sizev(ToCyclesLength(sizeV));
-			cclLight->set_ellipse(light.IsRound());
+			auto *cclAreaLight = static_cast<ccl::AreaLight *>(cclLight);
+			cclAreaLight->set_sizeu(ToCyclesLength(sizeU));
+			cclAreaLight->set_sizev(ToCyclesLength(sizeV));
+			cclAreaLight->set_ellipse(light.IsRound());
 
 			auto &rot = light.GetRotation();
 			auto forward = uquat::forward(rot);
 			//cclLight->set_dir(ToCyclesNormal(forward));
 			break;
 		}
-	case pragma::scenekit::Light::Type::Background:
-		{
-			break;
-		}
-	case pragma::scenekit::Light::Type::Triangle:
+	case Light::Type::Background:
 		{
 			break;
 		}
 	}
 
-	// This was introduced in a cycles update and causes odd lighting artifacts (like circles on walls close to light sources)
-	// Unsure what this property is for or why it's enabled by default, but by disabling it we get the old behavior back.
-	cclLight->set_is_sphere(false);
-
-	auto lightType = (light.GetType() == pragma::scenekit::Light::Type::Spot) ? pragma::LightType::Spot : (light.GetType() == pragma::scenekit::Light::Type::Directional) ? pragma::LightType::Directional : pragma::LightType::Point;
-	auto watt = (lightType == pragma::LightType::Spot) ? ulighting::cycles::lumen_to_watt_spot(light.GetIntensity(), light.GetColor(), light.GetOuterConeAngle())
-	  : (lightType == pragma::LightType::Point)        ? ulighting::cycles::lumen_to_watt_point(light.GetIntensity(), light.GetColor())
-	                                                   : ulighting::cycles::lumen_to_watt_area(light.GetIntensity(), light.GetColor());
+	auto lightType = (light.GetType() == Light::Type::Spot) ? LightType::Spot : (light.GetType() == Light::Type::Directional) ? LightType::Directional : LightType::Point;
+	auto watt = (lightType == LightType::Spot) ? ulighting::cycles::lumen_to_watt_spot(light.GetIntensity(), light.GetColor(), light.GetOuterConeAngle())
+	  : (lightType == LightType::Point)        ? ulighting::cycles::lumen_to_watt_point(light.GetIntensity(), light.GetColor())
+	                                           : ulighting::cycles::lumen_to_watt_area(light.GetIntensity(), light.GetColor());
 
 	// Multiple importance sampling. It's disabled by default for some reason, but it's usually best to keep it on.
 	// cclLight->set_use_mis(true);
@@ -987,15 +1004,18 @@ void pragma::scenekit::cycles::Renderer::SyncLight(pragma::scenekit::Scene &scen
 		watt *= scene.GetLightIntensityFactor() * lightIntensityMultiplier;
 	}
 	auto &color = light.GetColor();
-	cclLight->set_strength(ccl::float3 {color.r, color.g, color.b} * watt);
-	cclLight->set_size(ToCyclesLength(light.GetSize()));
+	cclLight->set_strength(ccl::make_float3(color.r, color.g, color.b) * watt);
+	if(light.GetType() == Light::Type::Spot)
+		static_cast<ccl::SpotLight *>(cclLight)->set_radius(ToCyclesLength(light.GetSize()));
 
 	// Apply pose
 	auto pose = light.GetPose();
-	cclLight->set_tfm(ToCyclesTransform(pose, true /* applyRotOffset */, true /* inverseDirection */));
+	cclLightObject->set_tfm(ToCyclesTransform(pose, true /* applyRotOffset */, true /* inverseDirection */));
 
 	cclLight->set_max_bounces(1'024);
-	cclLight->set_map_resolution(2'048);
+
+	if(light.GetType() == Light::Type::Background)
+		static_cast<ccl::BackgroundLight *>(cclLight)->set_map_resolution(2'048);
 
 	auto uuid = pragma::util::uuid_to_string(light.GetUuid());
 	auto udmLight = apiData.GetFromPath("cycles/scene/actors/" + uuid);
@@ -1005,8 +1025,9 @@ void pragma::scenekit::cycles::Renderer::SyncLight(pragma::scenekit::Scene &scen
 			cclLight->set_max_bounces(maxBounces);
 
 		uint32_t mapResolution;
-		if(udmLight["mapResolution"](mapResolution))
-			cclLight->set_map_resolution(mapResolution);
+		if(udmLight["mapResolution"](mapResolution) && light.GetType() == Light::Type::Background) {
+			static_cast<ccl::BackgroundLight *>(cclLight)->set_map_resolution(mapResolution);
+		}
 	}
 
 	cclLight->tag_update(m_cclScene);
@@ -1022,12 +1043,13 @@ void pragma::scenekit::cycles::Renderer::SyncLight(pragma::scenekit::Scene &scen
 	auto desc = GroupNodeDesc::Create(scene.GetShaderNodeManager());
 	auto &outputNode = desc->AddNode(NODE_OUTPUT);
 	auto &nodeEmission = desc->AddNode(NODE_EMISSION);
-	nodeEmission.SetProperty(pragma::scenekit::nodes::emission::IN_STRENGTH, 1.f);
-	nodeEmission.SetProperty(pragma::scenekit::nodes::emission::IN_COLOR, Vector3 {1.f, 1.f, 1.f});
+	nodeEmission.SetProperty(nodes::emission::IN_STRENGTH, 1.f);
+	nodeEmission.SetProperty(nodes::emission::IN_COLOR, Vector3 {1.f, 1.f, 1.f});
 	desc->Link(nodeEmission.GetOutputSocket("emission"), outputNode.GetInputSocket("surface"));
 
 	auto shader = CCLShader::Create(*this, *desc);
-	cclLight->set_shader(**shader);
+	set_light_shader(*cclLight, **shader);
+
 	m_lightToShader[&light] = shader;
 }
 
@@ -1276,7 +1298,7 @@ ccl::Mesh *pragma::scenekit::cycles::Renderer::AddDebugMesh()
 		num_triangles += nverts[i] - 2;
 	mesh->resize_mesh(P_array.size(), num_triangles);
 	auto *cclPositions = mesh->get_position_for_write();
-	memcpy(cclPositions, P_array.data(), P_array.size() *sizeof(ccl::float3));
+	memcpy(cclPositions, P_array.data(), P_array.size() * sizeof(ccl::float3));
 
 	/* create triangles */
 	int index_offset = 0;
@@ -1298,10 +1320,10 @@ ccl::Mesh *pragma::scenekit::cycles::Renderer::AddDebugMesh()
 			int v1 = verts[index_offset + j + 1];
 			int v2 = verts[index_offset + j + 2];
 
-			auto cclVertIdx = cclIdx *3;
+			auto cclVertIdx = cclIdx * 3;
 			cclTris[cclVertIdx] = v0;
-			cclTris[cclVertIdx +1] = v1;
-			cclTris[cclVertIdx +2] = v2;
+			cclTris[cclVertIdx + 1] = v1;
+			cclTris[cclVertIdx + 2] = v2;
 			cclShaders[cclIdx] = ishader;
 			cclShaders[cclIdx] = smooth;
 			++cclIdx;
@@ -1346,13 +1368,16 @@ void pragma::scenekit::cycles::Renderer::AddDebugLight()
 
 	//
 
-	auto plight = std::make_unique<ccl::Light>();
+	auto plight = std::make_unique<ccl::PointLight>();
 	auto *light = plight.get();
-	m_cclScene->lights.push_back(std::move(plight));
-	light->set_light_type(ccl::LightType::LIGHT_POINT);
-	light->set_shader(shader);
-	light->set_size(1.f);
-	light->set_tfm(ccl::transform_translate({0.f, 0.f, 1.f}));
+
+	auto pobject = std::make_unique<ccl::Object>();
+	auto *object = pobject.get();
+	object->set_geometry(light);
+	object->set_tfm(ccl::transform_translate(ccl::make_float3(0.f, 0.f, 1.f)));
+	set_light_shader(*light, shader);
+	m_cclScene->objects.push_back(std::move(pobject));
+	m_cclLights.push_back(std::move(plight));
 }
 ccl::Shader *pragma::scenekit::cycles::Renderer::AddDebugShader()
 {
@@ -1630,8 +1655,10 @@ bool pragma::scenekit::cycles::Renderer::Initialize(pragma::scenekit::Scene &sce
 		m_cclScene->integrator->set_denoise_start_sample(1);
 		// m_cclScene->integrator->set_denoiser_prefilter(ccl::DenoiserPrefilter::DENOISER_PREFILTER_FAST);
 		if(pragma::math::is_flag_set(static_cast<pragma::scenekit::Renderer::Flags>(m_flags), Flags::EnableLiveEditing)) {
-			m_cclScene->integrator->set_use_denoise_pass_albedo(true);
-			m_cclScene->integrator->set_use_denoise_pass_normal(false);
+			auto passes = m_cclScene->integrator->get_denoiser_passes();
+			passes |= ccl::DENOISER_PASS_ALBEDO;
+			passes &= ~ccl::DENOISER_PASS_NORMAL;
+			m_cclScene->integrator->set_denoiser_passes(passes);
 		}
 	}
 
@@ -1924,7 +1951,9 @@ void pragma::scenekit::cycles::Renderer::InitializeAlbedoPass(bool reloadShaders
 	m_cclSession->params.samples = sampleCount;
 	m_cclSession->reset(m_cclSession->params, bufferParams); // We only need the normals and albedo colors for the first sample
 
-	m_cclScene->lights.clear();
+	// Disable all light sources
+	for(auto &light : m_cclLights)
+		light->set_is_enabled(false);
 
 	if(reloadShaders == false)
 		return;
@@ -2162,17 +2191,21 @@ void pragma::scenekit::cycles::Renderer::AddSkybox(const std::string &texture)
 	AddShader(*CCLShader::Create(*this, *m_cclScene->default_background, *desc));
 
 	// Add the light source for the background
-	auto plight = std::make_unique<ccl::Light>();
+	auto plight = std::make_unique<ccl::BackgroundLight>();
 	auto *light = plight.get();
-	light->set_tfm(ccl::transform_identity());
 
-	m_cclScene->lights.push_back(std::move(plight));
-	light->set_light_type(ccl::LightType::LIGHT_BACKGROUND);
 	light->set_map_resolution(2'048);
-	light->set_shader(m_cclScene->default_background);
+	set_light_shader(*light, m_cclScene->default_background);
 	light->set_use_mis(true);
 	light->set_max_bounces(1'024);
 	light->tag_update(m_cclScene);
+
+	auto pobject = std::make_unique<ccl::Object>();
+	auto *object = pobject.get();
+	object->set_geometry(light);
+	object->set_tfm(ccl::transform_identity());
+	m_cclScene->objects.push_back(std::move(pobject));
+	m_cclLights.push_back(std::move(plight));
 }
 
 bool pragma::scenekit::cycles::Renderer::IsFeatureEnabled(Feature feature) const

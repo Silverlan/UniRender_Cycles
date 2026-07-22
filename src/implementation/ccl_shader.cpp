@@ -16,88 +16,88 @@ import pragma.scenekit;
 
 #undef CreateFile
 
-ccl::NodeMathType pragma::scenekit::cycles::to_ccl_type(pragma::scenekit::nodes::math::MathType type)
+ccl::NodeMathType pragma::scenekit::cycles::to_ccl_type(nodes::math::MathType type)
 {
 	switch(type) {
-	case pragma::scenekit::nodes::math::MathType::Add:
+	case nodes::math::MathType::Add:
 		return ccl::NodeMathType::NODE_MATH_ADD;
-	case pragma::scenekit::nodes::math::MathType::Subtract:
+	case nodes::math::MathType::Subtract:
 		return ccl::NodeMathType::NODE_MATH_SUBTRACT;
-	case pragma::scenekit::nodes::math::MathType::Multiply:
+	case nodes::math::MathType::Multiply:
 		return ccl::NodeMathType::NODE_MATH_MULTIPLY;
-	case pragma::scenekit::nodes::math::MathType::Divide:
+	case nodes::math::MathType::Divide:
 		return ccl::NodeMathType::NODE_MATH_DIVIDE;
-	case pragma::scenekit::nodes::math::MathType::Sine:
+	case nodes::math::MathType::Sine:
 		return ccl::NodeMathType::NODE_MATH_SINE;
-	case pragma::scenekit::nodes::math::MathType::Cosine:
+	case nodes::math::MathType::Cosine:
 		return ccl::NodeMathType::NODE_MATH_COSINE;
-	case pragma::scenekit::nodes::math::MathType::Tangent:
+	case nodes::math::MathType::Tangent:
 		return ccl::NodeMathType::NODE_MATH_TANGENT;
-	case pragma::scenekit::nodes::math::MathType::ArcSine:
+	case nodes::math::MathType::ArcSine:
 		return ccl::NodeMathType::NODE_MATH_ARCSINE;
-	case pragma::scenekit::nodes::math::MathType::ArcCosine:
+	case nodes::math::MathType::ArcCosine:
 		return ccl::NodeMathType::NODE_MATH_ARCCOSINE;
-	case pragma::scenekit::nodes::math::MathType::ArcTangent:
+	case nodes::math::MathType::ArcTangent:
 		return ccl::NodeMathType::NODE_MATH_ARCTANGENT;
-	case pragma::scenekit::nodes::math::MathType::Power:
+	case nodes::math::MathType::Power:
 		return ccl::NodeMathType::NODE_MATH_POWER;
-	case pragma::scenekit::nodes::math::MathType::Logarithm:
+	case nodes::math::MathType::Logarithm:
 		return ccl::NodeMathType::NODE_MATH_LOGARITHM;
-	case pragma::scenekit::nodes::math::MathType::Minimum:
+	case nodes::math::MathType::Minimum:
 		return ccl::NodeMathType::NODE_MATH_MINIMUM;
-	case pragma::scenekit::nodes::math::MathType::Maximum:
+	case nodes::math::MathType::Maximum:
 		return ccl::NodeMathType::NODE_MATH_MAXIMUM;
-	case pragma::scenekit::nodes::math::MathType::Round:
+	case nodes::math::MathType::Round:
 		return ccl::NodeMathType::NODE_MATH_ROUND;
-	case pragma::scenekit::nodes::math::MathType::LessThan:
+	case nodes::math::MathType::LessThan:
 		return ccl::NodeMathType::NODE_MATH_LESS_THAN;
-	case pragma::scenekit::nodes::math::MathType::GreaterThan:
+	case nodes::math::MathType::GreaterThan:
 		return ccl::NodeMathType::NODE_MATH_GREATER_THAN;
-	case pragma::scenekit::nodes::math::MathType::Modulo:
+	case nodes::math::MathType::Modulo:
 		return ccl::NodeMathType::NODE_MATH_MODULO;
-	case pragma::scenekit::nodes::math::MathType::Absolute:
+	case nodes::math::MathType::Absolute:
 		return ccl::NodeMathType::NODE_MATH_ABSOLUTE;
-	case pragma::scenekit::nodes::math::MathType::ArcTan2:
+	case nodes::math::MathType::ArcTan2:
 		return ccl::NodeMathType::NODE_MATH_ARCTAN2;
-	case pragma::scenekit::nodes::math::MathType::Floor:
+	case nodes::math::MathType::Floor:
 		return ccl::NodeMathType::NODE_MATH_FLOOR;
-	case pragma::scenekit::nodes::math::MathType::Ceil:
+	case nodes::math::MathType::Ceil:
 		return ccl::NodeMathType::NODE_MATH_CEIL;
-	case pragma::scenekit::nodes::math::MathType::Fraction:
+	case nodes::math::MathType::Fraction:
 		return ccl::NodeMathType::NODE_MATH_FRACTION;
-	case pragma::scenekit::nodes::math::MathType::Sqrt:
+	case nodes::math::MathType::Sqrt:
 		return ccl::NodeMathType::NODE_MATH_SQRT;
-	case pragma::scenekit::nodes::math::MathType::InvSqrt:
+	case nodes::math::MathType::InvSqrt:
 		return ccl::NodeMathType::NODE_MATH_INV_SQRT;
-	case pragma::scenekit::nodes::math::MathType::Sign:
+	case nodes::math::MathType::Sign:
 		return ccl::NodeMathType::NODE_MATH_SIGN;
-	case pragma::scenekit::nodes::math::MathType::Exponent:
+	case nodes::math::MathType::Exponent:
 		return ccl::NodeMathType::NODE_MATH_EXPONENT;
-	case pragma::scenekit::nodes::math::MathType::Radians:
+	case nodes::math::MathType::Radians:
 		return ccl::NodeMathType::NODE_MATH_RADIANS;
-	case pragma::scenekit::nodes::math::MathType::Degrees:
+	case nodes::math::MathType::Degrees:
 		return ccl::NodeMathType::NODE_MATH_DEGREES;
-	case pragma::scenekit::nodes::math::MathType::SinH:
+	case nodes::math::MathType::SinH:
 		return ccl::NodeMathType::NODE_MATH_SINH;
-	case pragma::scenekit::nodes::math::MathType::CosH:
+	case nodes::math::MathType::CosH:
 		return ccl::NodeMathType::NODE_MATH_COSH;
-	case pragma::scenekit::nodes::math::MathType::TanH:
+	case nodes::math::MathType::TanH:
 		return ccl::NodeMathType::NODE_MATH_TANH;
-	case pragma::scenekit::nodes::math::MathType::Trunc:
+	case nodes::math::MathType::Trunc:
 		return ccl::NodeMathType::NODE_MATH_TRUNC;
-	case pragma::scenekit::nodes::math::MathType::Snap:
+	case nodes::math::MathType::Snap:
 		return ccl::NodeMathType::NODE_MATH_SNAP;
-	case pragma::scenekit::nodes::math::MathType::Wrap:
+	case nodes::math::MathType::Wrap:
 		return ccl::NodeMathType::NODE_MATH_WRAP;
-	case pragma::scenekit::nodes::math::MathType::Compare:
+	case nodes::math::MathType::Compare:
 		return ccl::NodeMathType::NODE_MATH_COMPARE;
-	case pragma::scenekit::nodes::math::MathType::MultiplyAdd:
+	case nodes::math::MathType::MultiplyAdd:
 		return ccl::NodeMathType::NODE_MATH_MULTIPLY_ADD;
-	case pragma::scenekit::nodes::math::MathType::PingPong:
+	case nodes::math::MathType::PingPong:
 		return ccl::NodeMathType::NODE_MATH_PINGPONG;
-	case pragma::scenekit::nodes::math::MathType::SmoothMin:
+	case nodes::math::MathType::SmoothMin:
 		return ccl::NodeMathType::NODE_MATH_SMOOTH_MIN;
-	case pragma::scenekit::nodes::math::MathType::SmoothMax:
+	case nodes::math::MathType::SmoothMax:
 		return ccl::NodeMathType::NODE_MATH_SMOOTH_MAX;
 	}
 	static_assert(pragma::math::to_integral(pragma::scenekit::nodes::math::MathType::Add) == ccl::NodeMathType::NODE_MATH_ADD && pragma::math::to_integral(pragma::scenekit::nodes::math::MathType::SmoothMax) == ccl::NodeMathType::NODE_MATH_SMOOTH_MAX);
@@ -105,65 +105,65 @@ ccl::NodeMathType pragma::scenekit::cycles::to_ccl_type(pragma::scenekit::nodes:
 	// Unreachable
 	return {};
 }
-ccl::NodeVectorTransformType pragma::scenekit::cycles::to_ccl_type(pragma::scenekit::nodes::vector_transform::Type type)
+ccl::NodeVectorTransformType pragma::scenekit::cycles::to_ccl_type(nodes::vector_transform::Type type)
 {
 	switch(type) {
-	case pragma::scenekit::nodes::vector_transform::Type::Vector:
+	case nodes::vector_transform::Type::Vector:
 		return ccl::NodeVectorTransformType::NODE_VECTOR_TRANSFORM_TYPE_VECTOR;
-	case pragma::scenekit::nodes::vector_transform::Type::Point:
+	case nodes::vector_transform::Type::Point:
 		return ccl::NodeVectorTransformType::NODE_VECTOR_TRANSFORM_TYPE_POINT;
-	case pragma::scenekit::nodes::vector_transform::Type::Normal:
+	case nodes::vector_transform::Type::Normal:
 		return ccl::NodeVectorTransformType::NODE_VECTOR_TRANSFORM_TYPE_NORMAL;
 	};
 	static_assert(pragma::math::to_integral(pragma::scenekit::nodes::vector_transform::Type::Count) == 4);
 	// Unreachable
 	return {};
 }
-ccl::NodeVectorMathType pragma::scenekit::cycles::to_ccl_type(pragma::scenekit::nodes::vector_math::MathType type)
+ccl::NodeVectorMathType pragma::scenekit::cycles::to_ccl_type(nodes::vector_math::MathType type)
 {
 	switch(type) {
-	case pragma::scenekit::nodes::vector_math::MathType::Add:
+	case nodes::vector_math::MathType::Add:
 		return ccl::NodeVectorMathType::NODE_VECTOR_MATH_ADD;
-	case pragma::scenekit::nodes::vector_math::MathType::Subtract:
+	case nodes::vector_math::MathType::Subtract:
 		return ccl::NodeVectorMathType::NODE_VECTOR_MATH_SUBTRACT;
-	case pragma::scenekit::nodes::vector_math::MathType::Multiply:
+	case nodes::vector_math::MathType::Multiply:
 		return ccl::NodeVectorMathType::NODE_VECTOR_MATH_MULTIPLY;
-	case pragma::scenekit::nodes::vector_math::MathType::Divide:
+	case nodes::vector_math::MathType::Divide:
 		return ccl::NodeVectorMathType::NODE_VECTOR_MATH_DIVIDE;
 
-	case pragma::scenekit::nodes::vector_math::MathType::CrossProduct:
+	case nodes::vector_math::MathType::CrossProduct:
 		return ccl::NodeVectorMathType::NODE_VECTOR_MATH_CROSS_PRODUCT;
-	case pragma::scenekit::nodes::vector_math::MathType::Project:
+	case nodes::vector_math::MathType::Project:
 		return ccl::NodeVectorMathType::NODE_VECTOR_MATH_PROJECT;
-	case pragma::scenekit::nodes::vector_math::MathType::Reflect:
+	case nodes::vector_math::MathType::Reflect:
 		return ccl::NodeVectorMathType::NODE_VECTOR_MATH_REFLECT;
-	case pragma::scenekit::nodes::vector_math::MathType::DotProduct:
+	case nodes::vector_math::MathType::DotProduct:
 		return ccl::NodeVectorMathType::NODE_VECTOR_MATH_DOT_PRODUCT;
 
-	case pragma::scenekit::nodes::vector_math::MathType::Distance:
+	case nodes::vector_math::MathType::Distance:
 		return ccl::NodeVectorMathType::NODE_VECTOR_MATH_DISTANCE;
-	case pragma::scenekit::nodes::vector_math::MathType::Length:
+	case nodes::vector_math::MathType::Length:
 		return ccl::NodeVectorMathType::NODE_VECTOR_MATH_LENGTH;
-	case pragma::scenekit::nodes::vector_math::MathType::Scale:
+	case nodes::vector_math::MathType::Scale:
 		return ccl::NodeVectorMathType::NODE_VECTOR_MATH_SCALE;
-	case pragma::scenekit::nodes::vector_math::MathType::Normalize:
+	case nodes::vector_math::MathType::Normalize:
 		return ccl::NodeVectorMathType::NODE_VECTOR_MATH_NORMALIZE;
 
-	case pragma::scenekit::nodes::vector_math::MathType::Snap:
+	case nodes::vector_math::MathType::Snap:
 		return ccl::NodeVectorMathType::NODE_VECTOR_MATH_SNAP;
-	case pragma::scenekit::nodes::vector_math::MathType::Floor:
+	case nodes::vector_math::MathType::Floor:
 		return ccl::NodeVectorMathType::NODE_VECTOR_MATH_FLOOR;
-	case pragma::scenekit::nodes::vector_math::MathType::Ceil:
+	case nodes::vector_math::MathType::Ceil:
 		return ccl::NodeVectorMathType::NODE_VECTOR_MATH_CEIL;
-	case pragma::scenekit::nodes::vector_math::MathType::Modulo:
+	case nodes::vector_math::MathType::Modulo:
 		return ccl::NodeVectorMathType::NODE_VECTOR_MATH_MODULO;
-	case pragma::scenekit::nodes::vector_math::MathType::Fraction:
+	case nodes::vector_math::MathType::Fraction:
 		return ccl::NodeVectorMathType::NODE_VECTOR_MATH_FRACTION;
-	case pragma::scenekit::nodes::vector_math::MathType::Absolute:
+	case nodes::vector_math::MathType::Absolute:
 		return ccl::NodeVectorMathType::NODE_VECTOR_MATH_ABSOLUTE;
-	case pragma::scenekit::nodes::vector_math::MathType::Minimum:
+	case nodes::vector_math::MathType::Minimum:
 		return ccl::NodeVectorMathType::NODE_VECTOR_MATH_MINIMUM;
-	case pragma::scenekit::nodes::vector_math::MathType::Maximum:
+	case nodes::vector_math::MathType::Maximum:
 		return ccl::NodeVectorMathType::NODE_VECTOR_MATH_MAXIMUM;
 	};
 	static_assert(pragma::math::to_integral(pragma::scenekit::nodes::vector_math::MathType::Add) == ccl::NodeVectorMathType::NODE_VECTOR_MATH_ADD && pragma::math::to_integral(pragma::scenekit::nodes::vector_math::MathType::Maximum) == ccl::NodeVectorMathType::NODE_VECTOR_MATH_MAXIMUM);
@@ -172,63 +172,63 @@ ccl::NodeVectorMathType pragma::scenekit::cycles::to_ccl_type(pragma::scenekit::
 	return {};
 }
 
-ccl::ustring pragma::scenekit::cycles::to_ccl_type(pragma::scenekit::ColorSpace space)
+ccl::ustring pragma::scenekit::cycles::to_ccl_type(ColorSpace space)
 {
 	switch(space) {
-	case pragma::scenekit::ColorSpace::Raw:
-		return ccl::u_colorspace_raw;
-	case pragma::scenekit::ColorSpace::Srgb:
+	case ColorSpace::Raw:
+		return ccl::u_colorspace_scene_linear;
+	case ColorSpace::Srgb:
 		return ccl::u_colorspace_srgb;
 	}
-	static_assert(pragma::math::to_integral(pragma::scenekit::ColorSpace::Count) == 3);
+	static_assert(math::to_integral(ColorSpace::Count) == 3);
 	// Unreachable
 	return {};
 }
 
-ccl::NodeEnvironmentProjection pragma::scenekit::cycles::to_ccl_type(pragma::scenekit::EnvironmentProjection projection)
+ccl::NodeEnvironmentProjection pragma::scenekit::cycles::to_ccl_type(EnvironmentProjection projection)
 {
 	switch(projection) {
-	case pragma::scenekit::EnvironmentProjection::Equirectangular:
+	case EnvironmentProjection::Equirectangular:
 		return ccl::NodeEnvironmentProjection::NODE_ENVIRONMENT_EQUIRECTANGULAR;
-	case pragma::scenekit::EnvironmentProjection::MirrorBall:
+	case EnvironmentProjection::MirrorBall:
 		return ccl::NodeEnvironmentProjection::NODE_ENVIRONMENT_MIRROR_BALL;
 	}
-	static_assert(pragma::math::to_integral(pragma::scenekit::EnvironmentProjection::Equirectangular) == ccl::NodeEnvironmentProjection::NODE_ENVIRONMENT_EQUIRECTANGULAR
-	  && pragma::math::to_integral(pragma::scenekit::EnvironmentProjection::MirrorBall) == ccl::NodeEnvironmentProjection::NODE_ENVIRONMENT_MIRROR_BALL);
-	static_assert(pragma::math::to_integral(pragma::scenekit::EnvironmentProjection::Count) == 2);
+	static_assert(pragma::math::to_integral(EnvironmentProjection::Equirectangular) == ccl::NodeEnvironmentProjection::NODE_ENVIRONMENT_EQUIRECTANGULAR
+	  && pragma::math::to_integral(EnvironmentProjection::MirrorBall) == ccl::NodeEnvironmentProjection::NODE_ENVIRONMENT_MIRROR_BALL);
+	static_assert(pragma::math::to_integral(EnvironmentProjection::Count) == 2);
 	// Unreachable
 	return {};
 }
 
-ccl::ClosureType pragma::scenekit::cycles::to_ccl_type(pragma::scenekit::ClosureType type)
+ccl::ClosureType pragma::scenekit::cycles::to_ccl_type(ClosureType type)
 {
 	switch(type) {
-	case pragma::scenekit::ClosureType::BsdfMicroFacetMultiGgxGlass:
+	case ClosureType::BsdfMicroFacetMultiGgxGlass:
 		return ccl::ClosureType::CLOSURE_BSDF_MICROFACET_MULTI_GGX_GLASS_ID;
-	case pragma::scenekit::ClosureType::BsdfDiffuseToon:
+	case ClosureType::BsdfDiffuseToon:
 		return ccl::ClosureType::CLOSURE_BSDF_DIFFUSE_TOON_ID;
-	case pragma::scenekit::ClosureType::BsdfMicroFacetGgxGlass:
+	case ClosureType::BsdfMicroFacetGgxGlass:
 		return ccl::ClosureType::CLOSURE_BSDF_MICROFACET_GGX_GLASS_ID;
 	}
-	static_assert(pragma::math::to_integral(pragma::scenekit::EnvironmentProjection::Equirectangular) == ccl::NodeEnvironmentProjection::NODE_ENVIRONMENT_EQUIRECTANGULAR
-	  && pragma::math::to_integral(pragma::scenekit::EnvironmentProjection::MirrorBall) == ccl::NodeEnvironmentProjection::NODE_ENVIRONMENT_MIRROR_BALL);
-	static_assert(pragma::math::to_integral(pragma::scenekit::ClosureType::Count) == 4);
+	static_assert(pragma::math::to_integral(EnvironmentProjection::Equirectangular) == ccl::NodeEnvironmentProjection::NODE_ENVIRONMENT_EQUIRECTANGULAR
+	  && pragma::math::to_integral(EnvironmentProjection::MirrorBall) == ccl::NodeEnvironmentProjection::NODE_ENVIRONMENT_MIRROR_BALL);
+	static_assert(pragma::math::to_integral(ClosureType::Count) == 4);
 	// Unreachable
 	return {};
 }
 
-ccl::ImageAlphaType pragma::scenekit::cycles::to_ccl_type(pragma::scenekit::nodes::image_texture::AlphaType type)
+ccl::ImageAlphaType pragma::scenekit::cycles::to_ccl_type(nodes::image_texture::AlphaType type)
 {
 	switch(type) {
-	case pragma::scenekit::nodes::image_texture::AlphaType::Unassociated:
+	case nodes::image_texture::AlphaType::Unassociated:
 		return ccl::ImageAlphaType::IMAGE_ALPHA_UNASSOCIATED;
-	case pragma::scenekit::nodes::image_texture::AlphaType::Associated:
+	case nodes::image_texture::AlphaType::Associated:
 		return ccl::ImageAlphaType::IMAGE_ALPHA_ASSOCIATED;
-	case pragma::scenekit::nodes::image_texture::AlphaType::ChannelPacked:
+	case nodes::image_texture::AlphaType::ChannelPacked:
 		return ccl::ImageAlphaType::IMAGE_ALPHA_CHANNEL_PACKED;
-	case pragma::scenekit::nodes::image_texture::AlphaType::Ignore:
+	case nodes::image_texture::AlphaType::Ignore:
 		return ccl::ImageAlphaType::IMAGE_ALPHA_IGNORE;
-	case pragma::scenekit::nodes::image_texture::AlphaType::Auto:
+	case nodes::image_texture::AlphaType::Auto:
 		return ccl::ImageAlphaType::IMAGE_ALPHA_AUTO;
 	}
 	static_assert(pragma::math::to_integral(pragma::scenekit::nodes::image_texture::AlphaType::Unassociated) == ccl::ImageAlphaType::IMAGE_ALPHA_UNASSOCIATED && pragma::math::to_integral(pragma::scenekit::nodes::image_texture::AlphaType::Auto) == ccl::ImageAlphaType::IMAGE_ALPHA_AUTO);
@@ -237,32 +237,33 @@ ccl::ImageAlphaType pragma::scenekit::cycles::to_ccl_type(pragma::scenekit::node
 	return {};
 }
 
-ccl::InterpolationType pragma::scenekit::cycles::to_ccl_type(pragma::scenekit::nodes::image_texture::InterpolationType type)
+ccl::InterpolationType pragma::scenekit::cycles::to_ccl_type(nodes::image_texture::InterpolationType type)
 {
 	switch(type) {
-	case pragma::scenekit::nodes::image_texture::InterpolationType::Linear:
+	case nodes::image_texture::InterpolationType::Linear:
 		return ccl::InterpolationType::INTERPOLATION_LINEAR;
-	case pragma::scenekit::nodes::image_texture::InterpolationType::Closest:
+	case nodes::image_texture::InterpolationType::Closest:
 		return ccl::InterpolationType::INTERPOLATION_CLOSEST;
-	case pragma::scenekit::nodes::image_texture::InterpolationType::Cubic:
+	case nodes::image_texture::InterpolationType::Cubic:
 		return ccl::InterpolationType::INTERPOLATION_CUBIC;
-	case pragma::scenekit::nodes::image_texture::InterpolationType::Smart:
+	case nodes::image_texture::InterpolationType::Smart:
 		return ccl::InterpolationType::INTERPOLATION_SMART;
 	}
-	static_assert(pragma::math::to_integral(pragma::scenekit::nodes::image_texture::InterpolationType::Linear) == ccl::InterpolationType::INTERPOLATION_LINEAR && pragma::math::to_integral(pragma::scenekit::nodes::image_texture::InterpolationType::Smart) == ccl::InterpolationType::INTERPOLATION_SMART);
+	static_assert(
+	  pragma::math::to_integral(pragma::scenekit::nodes::image_texture::InterpolationType::Linear) == ccl::InterpolationType::INTERPOLATION_LINEAR && pragma::math::to_integral(pragma::scenekit::nodes::image_texture::InterpolationType::Smart) == ccl::InterpolationType::INTERPOLATION_SMART);
 	static_assert(pragma::math::to_integral(pragma::scenekit::nodes::image_texture::InterpolationType::Count) == 4);
 	// Unreachable
 	return {};
 }
 
-ccl::ExtensionType pragma::scenekit::cycles::to_ccl_type(pragma::scenekit::nodes::image_texture::ExtensionType type)
+ccl::ExtensionType pragma::scenekit::cycles::to_ccl_type(nodes::image_texture::ExtensionType type)
 {
 	switch(type) {
-	case pragma::scenekit::nodes::image_texture::ExtensionType::Repeat:
+	case nodes::image_texture::ExtensionType::Repeat:
 		return ccl::ExtensionType::EXTENSION_REPEAT;
-	case pragma::scenekit::nodes::image_texture::ExtensionType::Extend:
+	case nodes::image_texture::ExtensionType::Extend:
 		return ccl::ExtensionType::EXTENSION_EXTEND;
-	case pragma::scenekit::nodes::image_texture::ExtensionType::Clip:
+	case nodes::image_texture::ExtensionType::Clip:
 		return ccl::ExtensionType::EXTENSION_CLIP;
 	}
 	static_assert(pragma::math::to_integral(pragma::scenekit::nodes::image_texture::ExtensionType::Repeat) == ccl::ExtensionType::EXTENSION_REPEAT && pragma::math::to_integral(pragma::scenekit::nodes::image_texture::ExtensionType::Clip) == ccl::ExtensionType::EXTENSION_CLIP);
@@ -271,16 +272,16 @@ ccl::ExtensionType pragma::scenekit::cycles::to_ccl_type(pragma::scenekit::nodes
 	return {};
 }
 
-ccl::NodeImageProjection pragma::scenekit::cycles::to_ccl_type(pragma::scenekit::nodes::image_texture::Projection type)
+ccl::NodeImageProjection pragma::scenekit::cycles::to_ccl_type(nodes::image_texture::Projection type)
 {
 	switch(type) {
-	case pragma::scenekit::nodes::image_texture::Projection::Flat:
+	case nodes::image_texture::Projection::Flat:
 		return ccl::NodeImageProjection::NODE_IMAGE_PROJ_FLAT;
-	case pragma::scenekit::nodes::image_texture::Projection::Box:
+	case nodes::image_texture::Projection::Box:
 		return ccl::NodeImageProjection::NODE_IMAGE_PROJ_BOX;
-	case pragma::scenekit::nodes::image_texture::Projection::Sphere:
+	case nodes::image_texture::Projection::Sphere:
 		return ccl::NodeImageProjection::NODE_IMAGE_PROJ_SPHERE;
-	case pragma::scenekit::nodes::image_texture::Projection::Tube:
+	case nodes::image_texture::Projection::Tube:
 		return ccl::NodeImageProjection::NODE_IMAGE_PROJ_TUBE;
 	}
 	static_assert(pragma::math::to_integral(pragma::scenekit::nodes::image_texture::Projection::Flat) == ccl::NodeImageProjection::NODE_IMAGE_PROJ_FLAT && pragma::math::to_integral(pragma::scenekit::nodes::image_texture::Projection::Tube) == ccl::NodeImageProjection::NODE_IMAGE_PROJ_TUBE);
@@ -289,16 +290,16 @@ ccl::NodeImageProjection pragma::scenekit::cycles::to_ccl_type(pragma::scenekit:
 	return {};
 }
 
-ccl::NodeMappingType pragma::scenekit::cycles::to_ccl_type(pragma::scenekit::nodes::mapping::Type type)
+ccl::NodeMappingType pragma::scenekit::cycles::to_ccl_type(nodes::mapping::Type type)
 {
 	switch(type) {
-	case pragma::scenekit::nodes::mapping::Type::Point:
+	case nodes::mapping::Type::Point:
 		return ccl::NodeMappingType::NODE_MAPPING_TYPE_POINT;
-	case pragma::scenekit::nodes::mapping::Type::Texture:
+	case nodes::mapping::Type::Texture:
 		return ccl::NodeMappingType::NODE_MAPPING_TYPE_TEXTURE;
-	case pragma::scenekit::nodes::mapping::Type::Vector:
+	case nodes::mapping::Type::Vector:
 		return ccl::NodeMappingType::NODE_MAPPING_TYPE_VECTOR;
-	case pragma::scenekit::nodes::mapping::Type::Normal:
+	case nodes::mapping::Type::Normal:
 		return ccl::NodeMappingType::NODE_MAPPING_TYPE_NORMAL;
 	}
 	static_assert(pragma::math::to_integral(pragma::scenekit::nodes::mapping::Type::Point) == ccl::NodeMappingType::NODE_MAPPING_TYPE_POINT && pragma::math::to_integral(pragma::scenekit::nodes::mapping::Type::Normal) == ccl::NodeMappingType::NODE_MAPPING_TYPE_NORMAL);
@@ -307,14 +308,14 @@ ccl::NodeMappingType pragma::scenekit::cycles::to_ccl_type(pragma::scenekit::nod
 	return {};
 }
 
-ccl::NodeNormalMapSpace pragma::scenekit::cycles::to_ccl_type(pragma::scenekit::nodes::normal_map::Space space)
+ccl::NodeNormalMapSpace pragma::scenekit::cycles::to_ccl_type(nodes::normal_map::Space space)
 {
 	switch(space) {
-	case pragma::scenekit::nodes::normal_map::Space::Tangent:
+	case nodes::normal_map::Space::Tangent:
 		return ccl::NodeNormalMapSpace::NODE_NORMAL_MAP_TANGENT;
-	case pragma::scenekit::nodes::normal_map::Space::Object:
+	case nodes::normal_map::Space::Object:
 		return ccl::NodeNormalMapSpace::NODE_NORMAL_MAP_OBJECT;
-	case pragma::scenekit::nodes::normal_map::Space::World:
+	case nodes::normal_map::Space::World:
 		return ccl::NodeNormalMapSpace::NODE_NORMAL_MAP_WORLD;
 	}
 	static_assert(pragma::math::to_integral(pragma::scenekit::nodes::normal_map::Space::Tangent) == ccl::NodeNormalMapSpace::NODE_NORMAL_MAP_TANGENT && pragma::math::to_integral(pragma::scenekit::nodes::normal_map::Space::World) == ccl::NodeNormalMapSpace::NODE_NORMAL_MAP_WORLD);
@@ -323,48 +324,48 @@ ccl::NodeNormalMapSpace pragma::scenekit::cycles::to_ccl_type(pragma::scenekit::
 	return {};
 }
 
-ccl::NodeMix pragma::scenekit::cycles::to_ccl_type(pragma::scenekit::nodes::mix::Mix mix)
+ccl::NodeMix pragma::scenekit::cycles::to_ccl_type(nodes::mix::Mix mix)
 {
 	switch(mix) {
-	case pragma::scenekit::nodes::mix::Mix::Blend:
+	case nodes::mix::Mix::Blend:
 		return ccl::NodeMix::NODE_MIX_BLEND;
-	case pragma::scenekit::nodes::mix::Mix::Add:
+	case nodes::mix::Mix::Add:
 		return ccl::NodeMix::NODE_MIX_ADD;
-	case pragma::scenekit::nodes::mix::Mix::Mul:
+	case nodes::mix::Mix::Mul:
 		return ccl::NodeMix::NODE_MIX_MUL;
-	case pragma::scenekit::nodes::mix::Mix::Sub:
+	case nodes::mix::Mix::Sub:
 		return ccl::NodeMix::NODE_MIX_SUB;
-	case pragma::scenekit::nodes::mix::Mix::Screen:
+	case nodes::mix::Mix::Screen:
 		return ccl::NodeMix::NODE_MIX_SCREEN;
-	case pragma::scenekit::nodes::mix::Mix::Div:
+	case nodes::mix::Mix::Div:
 		return ccl::NodeMix::NODE_MIX_DIV;
-	case pragma::scenekit::nodes::mix::Mix::Diff:
+	case nodes::mix::Mix::Diff:
 		return ccl::NodeMix::NODE_MIX_DIFF;
-	case pragma::scenekit::nodes::mix::Mix::Dark:
+	case nodes::mix::Mix::Dark:
 		return ccl::NodeMix::NODE_MIX_DARK;
-	case pragma::scenekit::nodes::mix::Mix::Light:
+	case nodes::mix::Mix::Light:
 		return ccl::NodeMix::NODE_MIX_LIGHT;
-	case pragma::scenekit::nodes::mix::Mix::Overlay:
+	case nodes::mix::Mix::Overlay:
 		return ccl::NodeMix::NODE_MIX_OVERLAY;
-	case pragma::scenekit::nodes::mix::Mix::Dodge:
+	case nodes::mix::Mix::Dodge:
 		return ccl::NodeMix::NODE_MIX_DODGE;
-	case pragma::scenekit::nodes::mix::Mix::Burn:
+	case nodes::mix::Mix::Burn:
 		return ccl::NodeMix::NODE_MIX_BURN;
-	case pragma::scenekit::nodes::mix::Mix::Hue:
+	case nodes::mix::Mix::Hue:
 		return ccl::NodeMix::NODE_MIX_HUE;
-	case pragma::scenekit::nodes::mix::Mix::Sat:
+	case nodes::mix::Mix::Sat:
 		return ccl::NodeMix::NODE_MIX_SAT;
-	case pragma::scenekit::nodes::mix::Mix::Val:
+	case nodes::mix::Mix::Val:
 		return ccl::NodeMix::NODE_MIX_VAL;
-	case pragma::scenekit::nodes::mix::Mix::Color:
+	case nodes::mix::Mix::Color:
 		return ccl::NodeMix::NODE_MIX_COL;
-	case pragma::scenekit::nodes::mix::Mix::Soft:
+	case nodes::mix::Mix::Soft:
 		return ccl::NodeMix::NODE_MIX_SOFT;
-	case pragma::scenekit::nodes::mix::Mix::Linear:
+	case nodes::mix::Mix::Linear:
 		return ccl::NodeMix::NODE_MIX_LINEAR;
-	case pragma::scenekit::nodes::mix::Mix::Exclusion:
+	case nodes::mix::Mix::Exclusion:
 		return ccl::NodeMix::NODE_MIX_EXCLUSION;
-	case pragma::scenekit::nodes::mix::Mix::Clamp:
+	case nodes::mix::Mix::Clamp:
 		return ccl::NodeMix::NODE_MIX_CLAMP;
 	}
 	static_assert(pragma::math::to_integral(pragma::scenekit::nodes::mix::Mix::Blend) == ccl::NodeMix::NODE_MIX_BLEND && pragma::math::to_integral(pragma::scenekit::nodes::mix::Mix::Clamp) == ccl::NodeMix::NODE_MIX_CLAMP);
@@ -372,20 +373,36 @@ ccl::NodeMix pragma::scenekit::cycles::to_ccl_type(pragma::scenekit::nodes::mix:
 	// Unreachable
 	return {};
 }
-ccl::NodeVectorTransformConvertSpace pragma::scenekit::cycles::to_ccl_type(pragma::scenekit::nodes::vector_transform::ConvertSpace convertSpace)
+ccl::NodeVectorTransformConvertSpace pragma::scenekit::cycles::to_ccl_type(nodes::vector_transform::ConvertSpace convertSpace)
 {
 	switch(convertSpace) {
-	case pragma::scenekit::nodes::vector_transform::ConvertSpace::World:
+	case nodes::vector_transform::ConvertSpace::World:
 		return ccl::NodeVectorTransformConvertSpace::NODE_VECTOR_TRANSFORM_CONVERT_SPACE_WORLD;
-	case pragma::scenekit::nodes::vector_transform::ConvertSpace::Object:
+	case nodes::vector_transform::ConvertSpace::Object:
 		return ccl::NodeVectorTransformConvertSpace::NODE_VECTOR_TRANSFORM_CONVERT_SPACE_OBJECT;
-	case pragma::scenekit::nodes::vector_transform::ConvertSpace::Camera:
+	case nodes::vector_transform::ConvertSpace::Camera:
 		return ccl::NodeVectorTransformConvertSpace::NODE_VECTOR_TRANSFORM_CONVERT_SPACE_CAMERA;
 	}
 	static_assert(pragma::math::to_integral(pragma::scenekit::nodes::vector_transform::ConvertSpace::World) == ccl::NodeVectorTransformConvertSpace::NODE_VECTOR_TRANSFORM_CONVERT_SPACE_WORLD
 	  && pragma::math::to_integral(pragma::scenekit::nodes::vector_transform::ConvertSpace::Camera) == ccl::NodeVectorTransformConvertSpace::NODE_VECTOR_TRANSFORM_CONVERT_SPACE_CAMERA);
 	static_assert(pragma::math::to_integral(pragma::scenekit::nodes::vector_transform::ConvertSpace::Count) == 3);
 	// Unreachable
+	return {};
+}
+
+ccl::NodeCombSepColorType pragma::scenekit::cycles::to_ccl_type(nodes::separate_color::ColorType colorType)
+{
+	switch(colorType) {
+	case nodes::separate_color::ColorType::RGB:
+		return ccl::NodeCombSepColorType::NODE_COMBSEP_COLOR_RGB;
+	case nodes::separate_color::ColorType::HSV:
+		return ccl::NodeCombSepColorType::NODE_COMBSEP_COLOR_HSV;
+	case nodes::separate_color::ColorType::HSL:
+		return ccl::NodeCombSepColorType::NODE_COMBSEP_COLOR_HSL;
+	}
+	static_assert(pragma::math::to_integral(pragma::scenekit::nodes::separate_color::ColorType::RGB) == ccl::NodeCombSepColorType::NODE_COMBSEP_COLOR_RGB && pragma::math::to_integral(pragma::scenekit::nodes::separate_color::ColorType::HSL) == ccl::NodeCombSepColorType::NODE_COMBSEP_COLOR_HSL);
+	static_assert(pragma::math::to_integral(pragma::scenekit::nodes::separate_color::ColorType::Count) == 3);
+	std::unreachable();
 	return {};
 }
 
@@ -487,29 +504,29 @@ void pragma::scenekit::CCLShader::DoFinalize(Scene &scene)
 
 std::unique_ptr<pragma::scenekit::CCLShader::BaseNodeWrapper> pragma::scenekit::CCLShader::ResolveCustomNode(const std::string &typeName)
 {
-	if(typeName == pragma::scenekit::NODE_NORMAL_TEXTURE) {
+	if(typeName == NODE_NORMAL_TEXTURE) {
 		struct NormalNodeWrapper : public BaseNodeWrapper {
 			virtual ccl::ShaderInput *FindInput(const std::string &name, ccl::ShaderNode **outNode) override
 			{
-				if(name == pragma::scenekit::nodes::normal_texture::IN_STRENGTH) {
+				if(name == nodes::normal_texture::IN_STRENGTH) {
 					*outNode = normalMapNode;
-					return pragma::scenekit::CCLShader::FindInput(*normalMapNode, pragma::scenekit::nodes::normal_map::IN_STRENGTH);
+					return CCLShader::FindInput(*normalMapNode, nodes::normal_map::IN_STRENGTH);
 				}
 				return nullptr;
 			}
 			virtual ccl::ShaderOutput *FindOutput(const std::string &name, ccl::ShaderNode **outNode) override
 			{
-				if(name == pragma::scenekit::nodes::normal_texture::OUT_NORMAL) {
+				if(name == nodes::normal_texture::OUT_NORMAL) {
 					*outNode = normalMapNode;
-					return pragma::scenekit::CCLShader::FindOutput(*normalMapNode, pragma::scenekit::nodes::normal_map::OUT_NORMAL);
+					return CCLShader::FindOutput(*normalMapNode, nodes::normal_map::OUT_NORMAL);
 				}
 				return nullptr;
 			}
 			virtual const ccl::SocketType *FindProperty(const std::string &name, ccl::ShaderNode **outNode) override
 			{
-				if(name == pragma::scenekit::nodes::normal_texture::IN_FILENAME) {
+				if(name == nodes::normal_texture::IN_FILENAME) {
 					*outNode = imageTexNode;
-					return imageTexNode->type->find_input(ccl::ustring {pragma::scenekit::nodes::image_texture::IN_FILENAME});
+					return imageTexNode->type->find_input(ccl::ustring {nodes::image_texture::IN_FILENAME});
 				}
 				return nullptr;
 			}
@@ -518,25 +535,25 @@ std::unique_ptr<pragma::scenekit::CCLShader::BaseNodeWrapper> pragma::scenekit::
 			ccl::NormalMapNode *normalMapNode = nullptr;
 		};
 		auto wrapper = std::make_unique<NormalNodeWrapper>();
-		wrapper->imageTexNode = static_cast<ccl::ImageTextureNode *>(AddNode(pragma::scenekit::NODE_IMAGE_TEXTURE));
+		wrapper->imageTexNode = static_cast<ccl::ImageTextureNode *>(AddNode(NODE_IMAGE_TEXTURE));
 		assert(wrapper->imageTexNode);
-		wrapper->imageTexNode->set_colorspace(ccl::u_colorspace_raw);
+		wrapper->imageTexNode->set_colorspace(ccl::u_colorspace_scene_linear);
 		wrapper->imageTexNode->set_alpha_type(ccl::ImageAlphaType::IMAGE_ALPHA_IGNORE);
 
-		auto *sep = static_cast<ccl::SeparateRGBNode *>(AddNode(pragma::scenekit::NODE_SEPARATE_RGB));
-		m_cclGraph->connect(FindOutput(*wrapper->imageTexNode, pragma::scenekit::nodes::image_texture::OUT_COLOR), FindInput(*sep, pragma::scenekit::nodes::separate_rgb::IN_COLOR));
+		auto *sep = static_cast<ccl::SeparateColorNode *>(AddNode(NODE_SEPARATE_COLOR));
+		m_cclGraph->connect(FindOutput(*wrapper->imageTexNode, nodes::image_texture::OUT_COLOR), FindInput(*sep, nodes::separate_color::IN_COLOR));
 
-		auto *cmb = static_cast<ccl::CombineRGBNode *>(AddNode(pragma::scenekit::NODE_COMBINE_RGB));
-		m_cclGraph->connect(FindOutput(*sep, pragma::scenekit::nodes::separate_rgb::OUT_R), FindInput(*cmb, pragma::scenekit::nodes::combine_rgb::IN_G));
-		m_cclGraph->connect(FindOutput(*sep, pragma::scenekit::nodes::separate_rgb::OUT_G), FindInput(*cmb, pragma::scenekit::nodes::combine_rgb::IN_R));
-		m_cclGraph->connect(FindOutput(*sep, pragma::scenekit::nodes::separate_rgb::OUT_B), FindInput(*cmb, pragma::scenekit::nodes::combine_rgb::IN_B));
+		auto *cmb = static_cast<ccl::CombineColorNode *>(AddNode(NODE_COMBINE_COLOR));
+		m_cclGraph->connect(FindOutput(*sep, nodes::separate_color::OUT_R), FindInput(*cmb, nodes::combine_color::IN_G));
+		m_cclGraph->connect(FindOutput(*sep, nodes::separate_color::OUT_G), FindInput(*cmb, nodes::combine_color::IN_R));
+		m_cclGraph->connect(FindOutput(*sep, nodes::separate_color::OUT_B), FindInput(*cmb, nodes::combine_color::IN_B));
 
-		wrapper->normalMapNode = static_cast<ccl::NormalMapNode *>(AddNode(pragma::scenekit::NODE_NORMAL_MAP));
+		wrapper->normalMapNode = static_cast<ccl::NormalMapNode *>(AddNode(NODE_NORMAL_MAP));
 		assert(wrapper->normalMapNode);
 		wrapper->normalMapNode->set_space(ccl::NodeNormalMapSpace::NODE_NORMAL_MAP_TANGENT);
 
-		auto *normIn = FindInput(*wrapper->normalMapNode, pragma::scenekit::nodes::normal_map::IN_COLOR);
-		m_cclGraph->connect(FindOutput(*cmb, pragma::scenekit::nodes::combine_rgb::OUT_IMAGE), normIn);
+		auto *normIn = FindInput(*wrapper->normalMapNode, nodes::normal_map::IN_COLOR);
+		m_cclGraph->connect(FindOutput(*cmb, nodes::combine_color::OUT_COLOR), normIn);
 		return wrapper;
 	}
 	return nullptr;
@@ -743,30 +760,34 @@ void pragma::scenekit::CCLShader::ApplySocketValue(const ccl::ShaderNode &shader
 	if(sockDesc.dataValue.type == SocketType::Closure)
 		return;
 
-	if(apply_translated_socket_value<ccl::MathNode, pragma::scenekit::nodes::math::MathType>(shaderNode, socketName, "math_type", sockDesc, node, sockType))
+	if(apply_translated_socket_value<ccl::MathNode, nodes::math::MathType>(shaderNode, socketName, "math_type", sockDesc, node, sockType))
 		return;
-	if(apply_translated_socket_value<ccl::MappingNode, pragma::scenekit::nodes::mapping::Type>(shaderNode, socketName, "mapping_type", sockDesc, node, sockType))
+	if(apply_translated_socket_value<ccl::MappingNode, nodes::mapping::Type>(shaderNode, socketName, "mapping_type", sockDesc, node, sockType))
 		return;
-	if(apply_translated_socket_value<ccl::MixNode, pragma::scenekit::nodes::mix::Mix>(shaderNode, socketName, "mix_type", sockDesc, node, sockType))
+	if(apply_translated_socket_value<ccl::MixNode, nodes::mix::Mix>(shaderNode, socketName, "mix_type", sockDesc, node, sockType))
 		return;
-	if(apply_translated_socket_value<ccl::VectorMathNode, pragma::scenekit::nodes::vector_math::MathType>(shaderNode, socketName, "math_type", sockDesc, node, sockType))
+	if(apply_translated_socket_value<ccl::VectorMathNode, nodes::vector_math::MathType>(shaderNode, socketName, "math_type", sockDesc, node, sockType))
 		return;
-	if(apply_translated_socket_value<ccl::VectorTransformNode, pragma::scenekit::nodes::vector_transform::Type>(shaderNode, socketName, "transform_type", sockDesc, node, sockType))
+	if(apply_translated_socket_value<ccl::VectorTransformNode, nodes::vector_transform::Type>(shaderNode, socketName, "transform_type", sockDesc, node, sockType))
 		return;
 
-	if(apply_translated_socket_value<ccl::ImageTextureNode, pragma::scenekit::nodes::image_texture::InterpolationType>(shaderNode, socketName, "interpolation", sockDesc, node, sockType))
+	if(apply_translated_socket_value<ccl::ImageTextureNode, nodes::image_texture::InterpolationType>(shaderNode, socketName, "interpolation", sockDesc, node, sockType))
 		return;
-	if(apply_translated_socket_value<ccl::ImageTextureNode, pragma::scenekit::nodes::image_texture::ExtensionType>(shaderNode, socketName, "extension", sockDesc, node, sockType))
+	if(apply_translated_socket_value<ccl::ImageTextureNode, nodes::image_texture::ExtensionType>(shaderNode, socketName, "extension", sockDesc, node, sockType))
 		return;
-	if(apply_translated_socket_value<ccl::ImageTextureNode, pragma::scenekit::nodes::image_texture::Projection>(shaderNode, socketName, "projection", sockDesc, node, sockType))
+	if(apply_translated_socket_value<ccl::ImageTextureNode, nodes::image_texture::Projection>(shaderNode, socketName, "projection", sockDesc, node, sockType))
 		return;
-	if(apply_translated_socket_value<ccl::ImageTextureNode, pragma::scenekit::nodes::image_texture::AlphaType>(shaderNode, socketName, "alpha_type", sockDesc, node, sockType))
+	if(apply_translated_socket_value<ccl::ImageTextureNode, nodes::image_texture::AlphaType>(shaderNode, socketName, "alpha_type", sockDesc, node, sockType))
 		return;
-	if(apply_translated_socket_value<ccl::VectorTransformNode, pragma::scenekit::nodes::vector_transform::ConvertSpace>(shaderNode, socketName, "convert_from", sockDesc, node, sockType))
+	if(apply_translated_socket_value<ccl::VectorTransformNode, nodes::vector_transform::ConvertSpace>(shaderNode, socketName, "convert_from", sockDesc, node, sockType))
 		return;
-	if(apply_translated_socket_value<ccl::VectorTransformNode, pragma::scenekit::nodes::vector_transform::ConvertSpace>(shaderNode, socketName, "convert_to", sockDesc, node, sockType))
+	if(apply_translated_socket_value<ccl::VectorTransformNode, nodes::vector_transform::ConvertSpace>(shaderNode, socketName, "convert_to", sockDesc, node, sockType))
 		return;
-	if(apply_translated_socket_value<ccl::NormalMapNode, pragma::scenekit::nodes::normal_map::Space>(shaderNode, socketName, "space", sockDesc, node, sockType))
+	if(apply_translated_socket_value<ccl::NormalMapNode, nodes::normal_map::Space>(shaderNode, socketName, "space", sockDesc, node, sockType))
+		return;
+	if(apply_translated_socket_value<ccl::SeparateColorNode, nodes::separate_color::ColorType>(shaderNode, socketName, "color_type", sockDesc, node, sockType))
+		return;
+	if(apply_translated_socket_value<ccl::CombineColorNode, nodes::separate_color::ColorType>(shaderNode, socketName, "color_type", sockDesc, node, sockType))
 		return;
 
 	if(!sockDesc.dataValue.value) {
@@ -835,7 +856,7 @@ void pragma::scenekit::CCLShader::ApplySocketValue(const ccl::ShaderNode &shader
 		{
 			static_assert(std::is_same_v<STTransform, Mat4x3>);
 			auto &v = *static_cast<Mat4x3 *>(sockDesc.dataValue.value.get());
-			node.set(sockType, ccl::Transform {v[0][0], v[0][1], v[0][2], v[1][0], v[1][1], v[1][2], v[2][0], v[2][1], v[2][2], v[3][0], v[3][1], v[3][2]});
+			node.set(sockType, ccl::Transform {ccl::make_float4(v[0][0], v[0][1], v[0][2], v[1][0]), ccl::make_float4(v[1][1], v[1][2], v[2][0], v[2][1]), ccl::make_float4(v[2][2], v[3][0], v[3][1], v[3][2])});
 			break;
 		}
 	case SocketType::FloatArray:
@@ -850,12 +871,12 @@ void pragma::scenekit::CCLShader::ApplySocketValue(const ccl::ShaderNode &shader
 		{
 			static_assert(std::is_same_v<STColorArray, std::vector<STColor>>);
 			auto &v = *static_cast<std::vector<STColor> *>(sockDesc.dataValue.value.get());
-			auto cclArray = to_ccl_array<Vector3, ccl::float3>(v, [](const Vector3 &v) -> ccl::float3 { return ccl::make_float3(v.x, v.y, v.z); });
+			auto cclArray = to_ccl_array<Vector3, ccl::packed_float3>(v, [](const Vector3 &v) -> ccl::packed_float3 { return ccl::make_float3(v.x, v.y, v.z); });
 			node.set(sockType, cclArray);
 			break;
 		}
 	}
-	static_assert(pragma::math::to_integral(SocketType::Count) == 16);
+	static_assert(math::to_integral(SocketType::Count) == 16);
 }
 
 void pragma::scenekit::CCLShader::ConvertGroupSocketsToNodes(const GroupNodeDesc &groupDesc, GroupSocketTranslationTable &outGroupIoSockets)
@@ -898,7 +919,7 @@ void pragma::scenekit::CCLShader::ConvertGroupSocketsToNodes(const GroupNodeDesc
 				socketTranslation.input = {nodeVec, nodes::vector_math::IN_VECTOR1};
 				socketTranslation.output = {nodeVec, nodes::vector_math::OUT_VECTOR};
 			}
-			else if(socketDesc.dataValue.type == pragma::scenekit::SocketType::Closure) {
+			else if(socketDesc.dataValue.type == SocketType::Closure) {
 				auto *mix = static_cast<ccl::MixClosureNode *>(AddNode(NODE_MIX_CLOSURE));
 				assert(mix);
 				mix->set_fac(0.f);

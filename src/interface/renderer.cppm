@@ -68,6 +68,8 @@ export namespace pragma::scenekit::cycles {
 		const ccl::Mesh *FindCclMesh(const Mesh &mesh) const { return const_cast<Renderer *>(this)->FindCclMesh(mesh); }
 		ccl::Light *FindCclLight(const Light &light);
 		const ccl::Light *FindCclLight(const Light &light) const { return const_cast<Renderer *>(this)->FindCclLight(light); }
+		ccl::Object *FindCclLightObject(const Light &light);
+		const ccl::Object *FindCclLightObject(const Light &light) const { return const_cast<Renderer *>(this)->FindCclLightObject(light); }
 
 		ccl::Scene *operator->() { return m_cclScene; }
 		const ccl::Scene *operator->() const { return const_cast<Renderer *>(this)->operator->(); }
@@ -138,6 +140,7 @@ export namespace pragma::scenekit::cycles {
 		OutputDriver *m_outputDriver = nullptr;
 		ccl::Scene *m_cclScene = nullptr;
 		std::vector<std::shared_ptr<CCLShader>> m_cclShaders = {};
+		std::vector<std::unique_ptr<ccl::Light>> m_cclLights = {};
 		std::unordered_map<const GroupNodeDesc *, size_t> m_shaderCache {};
 		struct CclObjectInfo {
 			ccl::Object *object = nullptr;
@@ -147,7 +150,7 @@ export namespace pragma::scenekit::cycles {
 		std::unordered_map<std::string, const Object *> m_uuidToObject;
 		std::unordered_map<const Mesh *, ccl::Mesh *> m_meshToCcclMesh;
 		std::unordered_map<ccl::Mesh *, const Mesh *> m_cclMeshToMesh;
-		std::unordered_map<const Light *, ccl::Light *> m_lightToCclLight;
+		std::unordered_map<const Light *, ccl::Object *> m_lightToCclObject;
 		std::unordered_map<const pragma::scenekit::Light *, std::shared_ptr<CCLShader>> m_lightToShader;
 		std::atomic<uint32_t> m_restartState = 0;
 		StateFlags m_stateFlags = StateFlags::None;
