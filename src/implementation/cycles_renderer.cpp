@@ -22,6 +22,7 @@ module;
 #include <scene/hair.h>
 #include <app/oiio_output_driver.h>
 #include <util/path.h>
+#include <util/types_normal.h>
 
 #ifdef _WIN32
 #define ENABLE_CYCLES_LOGGING
@@ -443,7 +444,7 @@ template<typename T, typename TCcl>
 static void copy_vector_to_attribute(const std::vector<T> &data, ccl::Attribute &attr, const std::function<TCcl(const T &)> &translate)
 {
 	if(attr.data_sizeof() != sizeof(TCcl))
-		throw std::logic_error {"Data size mismatch"};
+		throw std::logic_error {std::format("copy_vector_to_attribute: Data size mismatch. attr.data_sizeof = {}, but sizeof({}) = {}", attr.data_sizeof(), typeid(TCcl).name(), sizeof(TCcl))};
 
 	std::vector<TCcl> cclValues;
 	cclValues.reserve(data.size());
@@ -589,21 +590,21 @@ void pragma::scenekit::cycles::Renderer::SyncMesh(const pragma::scenekit::Mesh &
 		cclSmooth[triIdx] = smooth[triIdx];
 	}
 
-	auto fToFloat4 = [](const ccl::float3 &v) -> ccl::float4 { return ccl::make_float4(v.x, v.y, v.z, 0.f); };
+	auto fToPackedNormal = [](const ccl::float3 &v) -> ccl::packed_normal { return ccl::packed_normal{v}; };
 	auto nrmDbgHandler = GetScene().GetDebugHandler("normal");
 	if(nrmDbgHandler) {
 		auto pData = std::make_shared<Vector3>();
-		initialize_attribute<Vector3, ccl::float4>(*cclMesh, ccl::ATTR_STD_VERTEX_NORMAL, mesh.GetVertexNormals(), [&fToFloat4, &nrmDbgHandler, &pData](const Vector3 &v) -> ccl::float4 {
+		initialize_attribute<Vector3, ccl::packed_normal>(*cclMesh, ccl::ATTR_STD_VERTEX_NORMAL, mesh.GetVertexNormals(), [&fToPackedNormal, &nrmDbgHandler, &pData](const Vector3 &v) -> ccl::packed_normal {
 			*pData = v;
 			nrmDbgHandler(pData);
 			auto n = *pData;
-			return fToFloat4(ccl::make_float3(n.x, n.y, n.z));
+			return fToPackedNormal(ccl::make_float3(n.x, n.y, n.z));
 		});
 	}
 	else
-		initialize_attribute<Vector3, ccl::float4>(*cclMesh, ccl::ATTR_STD_VERTEX_NORMAL, mesh.GetVertexNormals(), [&fToFloat4](const Vector3 &v) -> ccl::float4 { return fToFloat4(ToCyclesNormal(v)); });
+		initialize_attribute<Vector3, ccl::packed_normal>(*cclMesh, ccl::ATTR_STD_VERTEX_NORMAL, mesh.GetVertexNormals(), [&fToPackedNormal](const Vector3 &v) -> ccl::packed_normal { return fToPackedNormal(ToCyclesNormal(v)); });
 	initialize_attribute<Vector2, ccl::float2>(*cclMesh, ccl::ATTR_STD_UV, mesh.GetUvs(), [](const Vector2 &v) -> ccl::float2 { return ToCyclesUV(v); });
-	initialize_attribute<Vector3, ccl::float3>(*cclMesh, ccl::ATTR_STD_UV_TANGENT, mesh.GetUvTangents(), [](const Vector3 &v) -> ccl::float3 { return ToCyclesNormal(v); });
+	initialize_attribute<Vector3, ccl::packed_float3>(*cclMesh, ccl::ATTR_STD_UV_TANGENT, mesh.GetUvTangents(), [](const Vector3 &v) -> ccl::packed_float3 { return ToCyclesNormal(v); });
 	initialize_attribute<float, float>(*cclMesh, ccl::ATTR_STD_UV_TANGENT_SIGN, mesh.GetUvTangentSigns(), [](const float &v) -> float { return v; });
 
 	auto *attrT = cclMesh->attributes.add(ccl::ATTR_STD_UV_TANGENT);
