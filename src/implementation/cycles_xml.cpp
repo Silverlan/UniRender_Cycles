@@ -16,8 +16,6 @@
 
 module;
 
-module pragma.scenekit.cycles;
-
 // XML debug test code
 // Currently unused/deactivated
 #if 0
@@ -53,9 +51,11 @@ module pragma.scenekit.cycles;
 #include "util/xml.h"
 
 #include "app/cycles_xml.h"
+#endif
 
 module pragma.scenekit.cycles;
 
+#if 0
 using namespace pugi;
 
 CCL_NAMESPACE_BEGIN
